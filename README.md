@@ -9,12 +9,12 @@ Inspired by the amazing ALA library for the Arduino.
 -animation sequencing (speed and duration control)  
 -transparency  
 -foreground and background images or colours    
--chain animations (like a LED strip folded)
+-chain animations (like a LED strip folded)  
 -text animations (like scrolling text messages)  
 -image animations like fade in/out, dissolve, blur, blend,  hue change etc    
--panel animations like drawing randomly sized rectangles/ellipses etc
+-panel animations like drawing randomly sized rectangles/ellipses etc  
 -affine image transforms  
--image scaling with anti-aliasing
+-image scaling with anti-aliasing  
 -BDF and openCV fonts 
 
 See the docs folder for more information
