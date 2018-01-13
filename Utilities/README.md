@@ -1,8 +1,8 @@
-#Utilities
+# Utilities
 
 Chain Maker and Text Chain Maker are a couple of programs I cobbled together to make chain creation easier.
 
-##Chain Maker
+## Chain Maker
 
 This takes in an SVG document from Inkscape and generates a chain (a list of XY coordinates for a bunch of LEDs).
 
@@ -18,7 +18,7 @@ The program uses the Inkscape layers to name the seperate chains.
 
 You can import the resulting file into your code.
 
-##Text Chain Maker
+## Text Chain Maker
 
 Similar to Chain Maker but you feed it a text message and it does it's best to produce a chain which follows the text.
 
