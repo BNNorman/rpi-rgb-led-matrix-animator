@@ -36,7 +36,7 @@ On the Raspberry Pi you need to install the HZeller drivers (https://github.com/
 
 ## Getting Started
 
-Try running the Exmaples then look at the code - I've tried to make it as flexible and intuitive as possible.
+Try running the Examples then look at the code - I've tried to make it as flexible and intuitive as possible.
 
 There will be some video demos on YouTube or you can look at Norman Truck Logos on Facebook to see the development of
  some of the animations.
