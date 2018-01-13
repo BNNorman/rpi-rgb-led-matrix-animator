@@ -3,7 +3,7 @@ Python code to play animation sequences on an RGB LED matrix panel using the HZe
 
 Inspired by the amazing ALA library for the Arduino.
 
-##Currently supports:-
+## Currently supports:-
 
 -multiple layers  
 -animation sequencing (speed and duration control)  
@@ -19,21 +19,21 @@ Inspired by the amazing ALA library for the Arduino.
 
 See the docs folder for more information
 
-##Licence
+## Licence
 
 Free to use and modify but credit me as the original author please. Please read License.md
  
 This work took several months so, if you really feel grateful, you could send me money via my PayPal account - it would 
 help my tiny pension.
 
-##Getting Started
+## Getting Started
 
 Try running the Exmaples then look at the code - I've tried to make it as flexible and intuitive as possible.
 
 There will be some video demos on YouTube or you can look at Norman Truck Logos on Facebook to see the development of
  some of the animations.
 
-##Apologies
+## Apologies
 
 I've tried my best to fully document this code. You'll find most documents in the Docs folder.
 
