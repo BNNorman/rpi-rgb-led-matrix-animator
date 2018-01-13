@@ -5,7 +5,7 @@ a text object class used to tidy up
 
 Useage:-
 
-msg1=Text(text="some message",fontFace="BDF",fontSize=12,fgColor=Palette.XMAS,bgColour=Aqua.getPixelColor())
+msg1=Text(text="some message",fontFace="BDF",fontSize=12,fgColor=Palette.XMAS,bgColor=Aqua.getPixelColor())
 
 or
 
