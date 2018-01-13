@@ -26,6 +26,14 @@ Free to use and modify but credit me as the original author please. Please read 
 This work took several months so, if you really feel grateful, you could send me money via my PayPal account - it would 
 help my tiny pension.
 
+## Requirements
+
+Raspberry Pi
+HZeller interface for the HUB75 panels (See OSH Park for pcbs for the active controller)  
+The code is written for Python 2 and requires openCV, numpy, matplotlib, PIL (or pillow).
+
+On the Raspberry Pi you need to install the HZeller drivers (https://github.com/hzeller/rpi-rgb-led-matrix)
+
 ## Getting Started
 
 Try running the Exmaples then look at the code - I've tried to make it as flexible and intuitive as possible.
