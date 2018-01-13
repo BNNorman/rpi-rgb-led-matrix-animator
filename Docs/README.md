@@ -41,7 +41,7 @@ missing.
 
 ## Coding Inconsistencies
 
-Soemtimes we all do things the wrong way - for example directly accessing the attributes of an object with dot 
+Sometimes we all do things the wrong way - for example directly accessing the attributes of an object with dot 
 notation when adding a method would isolate against future code changes. I'm sure you will find many cases of this. 
 I'm not sure what impact doing stuff the right way will have on the overall speed of the animator.
 
