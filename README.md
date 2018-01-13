@@ -1,31 +1,44 @@
 # rpi-rgb-led-matrix-animator
 Python code to play animation sequences on an RGB LED matrix panel using the HZeller (https://github.com/hzeller/rpi-rgb-led-matrix) drivers on a Raspberry Pi (Model 3 used)
 
-Coming soon - currently working on documentation and more testing
+Inspired by the amazing ALA library for the Arduino.
 
 ##Currently supports:-
 
-*multiple layers
+-multiple layers  
+-animation sequencing (speed and duration control)  
+-transparency  
+-foreground and background images or colours    
+-chain animations (like a LED strip folded)
+-text animations (like scrolling text messages)  
+-image animations like fade in/out, dissolve, blur, blend,  hue change etc    
+-panel animations like drawing randomly sized rectangles/ellipses etc
+-affine image transforms  
+-image scaling with anti-aliasing
+-BDF and openCV fonts 
 
-*animation sequencing (speed and duration control)
+See the docs folder for more information
 
-*colour transparency
+##Licence
+
+Free to use and modify but credit me as the original author please. Please read License.md
  
-*foreground and background images 
+This work took several months so, if you really feel grateful, you could send me money via my PayPal account - it would 
+help my tiny pension.
 
-*background colours
+##Getting Started
 
-*chain animations (like a LED strip folded)
+Try running the Exmaples then look at the code - I've tried to make it as flexible and intuitive as possible.
 
-*affine image transforms 
+There will be some video demos on YouTube or you can look at Norman Truck Logos on Facebook to see the development of
+ some of the animations.
 
-*BDF and openCV fonts 
+##Apologies
 
-##Animation classes:-
+I've tried my best to fully document this code. You'll find most documents in the Docs folder.
 
-*TextAnimations - colour changes, scaling/moving
+The Python scripts should all have doc strings.
 
-*ImageAnimations - colour manipulation, shape transforms, dissolve, slide and Pan 
+If you find any omissions let me know.
 
-*ChainAnimations - a lits of LED coordinates which can be manipulated using animations such as collide, Knight Rider (Larson),Fade,Sparkle to name only a few 
-
+If you improve the code - especially regarding execution speed - let me know.
