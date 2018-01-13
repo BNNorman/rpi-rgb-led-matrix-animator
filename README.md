@@ -50,3 +50,8 @@ The Python scripts should all have doc strings.
 If you find any omissions let me know.
 
 If you improve the code - especially regarding execution speed - let me know.
+
+## Color and Colour
+
+Sorry guys, I'm English so colour is correct. However, I have tried to use color as that seems to be the adopted 
+strategy. You may come across the word colour in places - it means the same as color LOL.
