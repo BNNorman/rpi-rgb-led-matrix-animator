@@ -1,6 +1,6 @@
-#LEDAnimator
+# LEDAnimator
 
-##Introduction
+## Introduction
 
 The content of this document applies to ALL animations.
 
@@ -19,7 +19,7 @@ These files can be edited to add your own extra animations. Each defines a simil
 Other, user-defined, parameters may be added on a per-animation basis. See specific HOW-TO documents if you want to add extra animations.
 
 
-##Duration
+## Duration
 
 When an animation starts it runs until the duration is exceeded then it is frozen. If the animation is a cycle then it is possible that the cycle will terminate part way through. You need to adjust the duration to get the result you want. Bear in mind this will be affected by how many animations are running at any time and, probably, the hardware it is running on. A Raspberry Pi 3 was used for developing the code.
 
@@ -31,7 +31,7 @@ Your animation step() function can detect when the duration has been reached by 
         return
 ```
 
-##Speed
+## Speed
 When the animator runs it cycles through the animation sequences calling the animation step() function once every 1/fps seconds. 
 
 The speed of the animation can be controlled within the step() function with the code:- 
@@ -46,7 +46,7 @@ If you set speed, say, to 0.5 then your step() function would be called at half 
 
 Within the animation step() function the animation code can check the current 'clock' tick by calling self.calcTick() which returns an integer for the current tick. This will always cycle between 0 and fps-1.
 
-###ChainAnimations
+### ChainAnimations
 
 These are animations applied to a list of LEDs in an RGB matrix. A chain is simply a python list of X/Y coordinate pairs each of which represent an LED. Each has an associated colour. Changing the colours effects an animation.
 
@@ -64,7 +64,7 @@ Use good quality images (better resolution than your LED matrix) but small enoug
 
 Images are loaded and manipulated using the NumpyImage class in NumpyImage.py. Images are converted and resized to HSV using openCV. When output to the LED matrix using the hzeller drivers the images are converted to PIL format. With a small matrix this isn't a long process.
 
-##Simulator
+## Simulator
 
 The library works with a real RGB LED panel or simulates the panel using TkInter. TkInter is problematic with refresh speed but, otherwise, is useful for intitial debugging of animations. And that's all it is for!
 
@@ -80,6 +80,6 @@ At the start of the library files you may see this code:-
 ```
 On my windows machine PyCharm underlines rgbmatrix because it cannot be found. On my RasPi rgbmatrix IS imported and the except clause is ignored. Win-Win.
 
-#Where Next
+# Where Next
 
 Read the Docs section
