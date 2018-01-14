@@ -8,6 +8,7 @@ There are 3 main files which contain the animation code:-
 1. ChainAnimations.py
 2. TextAnimations.py
 3. ImageAnimations.py 
+4. PanelAnimations.py  
 
 These files can be edited to add your own extra animations. Each defines a similar base class which manages default parameters:-
 
@@ -21,15 +22,13 @@ Other, user-defined, parameters may be added on a per-animation basis. See speci
 
 ## Duration
 
-When an animation starts it runs until the duration is exceeded then it is frozen. If the animation is a cycle then it is possible that the cycle will terminate part way through. You need to adjust the duration to get the result you want. Bear in mind this will be affected by how many animations are running at any time and, probably, the hardware it is running on. A Raspberry Pi 3 was used for developing the code.
+When an animation starts it runs until the duration is reached/exceeded at which point it stops running. The next 
+animation in your sequence will then start.
 
-Your animation step() function can detect when the duration has been reached by using the following code:-
+If the animation parameter **animLoops=True** the animation will repeate over and over till the suration is 
+reached or exceeded. Therefore it is possible that the cycle will terminate part way through. You 
+need to adjust the duration to get the result you want. Bear in mind this will be affected by how many animations are running at any time and, probably, the hardware it is running on. A Raspberry Pi 3 was used for developing the code.
 
-```
-    if self.hasEnded():   
-        do something here 
-        return
-```
 
 ## Speed
 When the animator runs it cycles through the animation sequences calling the animation step() function once every 1/fps seconds. 
@@ -38,6 +37,7 @@ The speed of the animation can be controlled within the step() function with the
 
 ```
 if self.isNotNextStep(): 
+    self.refreshCanvas()
     return
 ```
 
@@ -46,23 +46,29 @@ If you set speed, say, to 0.5 then your step() function would be called at half 
 
 Within the animation step() function the animation code can check the current 'clock' tick by calling self.calcTick() which returns an integer for the current tick. This will always cycle between 0 and fps-1.
 
-### ChainAnimations
+### Chain Animations
 
 These are animations applied to a list of LEDs in an RGB matrix. A chain is simply a python list of X/Y coordinate pairs each of which represent an LED. Each has an associated colour. Changing the colours effects an animation.
 
 The folders Chain Maker and Text Chain Maker contain some python programs for generating chains from a marked up SVG image.
 
-### TextAnimations
+### Text Animations
 
 Although text could be animated as a chain of LEDs it can also be drawn as simple mono-spaced text.
 
-### ImageAnimations
+### Image Animations
 
 These animations allow you to manipulate images and display the result. The original image is cached so that changes can be undone without the expense of a filesystem access. 
 
 Use good quality images (better resolution than your LED matrix) but small enough to reduce memory usage.
 
 Images are loaded and manipulated using the NumpyImage class in NumpyImage.py. Images are converted and resized to HSV using openCV. When output to the LED matrix using the hzeller drivers the images are converted to PIL format. With a small matrix this isn't a long process.
+
+### Panel Animations
+
+These consist of animations which don't fall into the other categories. They can use foreground images and have 
+background images or colors.
+
 
 ## Simulator
 
