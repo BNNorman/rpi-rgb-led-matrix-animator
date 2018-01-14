@@ -1,8 +1,8 @@
-#Palettes and Colors
+# Palettes and Colors
 
 Chain and text animations may use color palettes which are just python lists of colour objects.
 
-##RGB or BGR?
+## RGB or BGR?
 
 OpenCV imread() returns images in BGR order so the code manages color in that way to minimise channel swapping.
 
@@ -12,7 +12,7 @@ method in ImageCache.py you may need to redefine these - usually it's just R and
 
 Panel.py changes the byte order for output to the LED RGB Panel, if it needs to.
 
-##Colors
+## Colors
 
 See Colors.py
 
@@ -23,7 +23,7 @@ just by multiplying the V component by a brightness factor e.g.:-
 
 Colors.py also includes a full list of the www.w3schools.org colour table. 
 
-##Palettes
+## Palettes
 
 See Palette.py
 

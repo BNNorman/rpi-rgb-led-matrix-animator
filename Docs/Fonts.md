@@ -1,4 +1,4 @@
-#Fonts
+# Fonts
 
 This program currently only supports BDF and Hershey fonts. 
 
@@ -6,12 +6,12 @@ TODO: I believe that Using the python PIL library may enable the use of TrueType
 would require the definition of a constant like TTF_FONTTYPE or OTF+FONTTYPE in Constants.py. Then create a folder 
 (TTF/OTF) and add a Fonts.py file to it - see the OPENCV folder for an example.
 
-#Hershey
+# Hershey
 
 OpenCV uses Hershey fonts which are scaleable and may be drawn bold or italic. They can also be drawn using 
 anti-aliasing (lineType=LINE_AA)
 
-#BDF
+# BDF
 
 Currently BDF (Bitmap distribution Format) fonts are not scaled so there has to be a font size matching the target 
 size. See Constants.py for the list available.
@@ -25,7 +25,7 @@ Currently BDF fonts are listed in a Python dictionary keyed by pixel size.
 TODO: Code changes will be required to allow selection of bold/italic. I would recommend using thickness=2 for bold 
 because Hershey fonts already have a **thickness** setting.
 
-#Font Metrics
+# Font Metrics
 
 Fonts have ascenders and descenders. 
 

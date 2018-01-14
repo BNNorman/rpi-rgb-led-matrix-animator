@@ -1,4 +1,4 @@
-#Speed Control
+# Speed Control
 
 When you set the animation fps to 100 the Animator **tries** to call the animation that number of times per second.
 

@@ -1,4 +1,4 @@
-#Writing Animations
+# Writing Animations
 
 This program supports a number of types (sub-classes) of animations:-
 
@@ -13,7 +13,7 @@ visually pleasing graphics - the Panel is treated a bit like a drawing board - d
 
 You can add your own animation sub-classes if you want/need to.
 
-##Creating an animation
+## Creating an animation
 
 The basic template is :-
 
@@ -55,10 +55,10 @@ would mean your animation doesn't progress.
 
 Look at the examples to see how I wrote the animations (I'm sure they could be optimised).
 
-##Animation sub-classes
+## Animation sub-classes
 All animation types inherit from the AnimBase object which processes the parameters passed in for the animation. The sub-classes are, currently, ChainAnimBase, TextAnimBase and ImageAnimBase. These provide an opportunity to do something which is only related to the individual animation subclasses. At some stage you might want to add other types of animation sub-classes.  
 
-##AnimBase
+## AnimBase
 
 All animation types inherit from the AnimBase object which processes the parameters passed in for the animation. The sub-classes are, currently, ChainAnimBase, TextAnimBase and ImageAnimBase. These provide an opportunity to do something which is only related to the individual animation subclasses. At some stage you might want to add other types of animation sub-classes.  
 
@@ -72,7 +72,7 @@ First of all, the `__init__` function accepts all the keyword arguments, for the
 This is a very flexible way to pass any parameters without knowing what they are called beforehand. However, it is also very dangerous since it is possible to clobber variables used by AnimBase.
 Perhaps, in a future release, animation parameters will be created on a private object to avoid collisions. For now, you need to know which parameters AnimBase uses to control the execution of your animations.
 
-##Using Inheritance
+## Using Inheritance
 
 It is possible you might want to create an animation which is sub-classed to behave in different ways. I'll use Fade as an example. You would want be able to fade in and fade out some LEDs.
 
@@ -114,7 +114,7 @@ This is how to sub-class Fade (which has already been done):-
 The direction parameters override the super class parameter.
 
 
-##Animation Sequences
+## Animation Sequences
 
 Here's an example animation sequence which you would put in your main.py script :-
 
@@ -135,7 +135,7 @@ At the start of each stage of the sequence the animation code calls the **reset(
 **reset()** method sets **self.init=True** to tell your code to start over. Within your **step()** method you should 
 set **self.init=False** to allow the animation to progress (See the basic template above).
 
-##Animation looping
+## Animation looping
 
 By default, animations will play once and stop then wait until the set duration has expired before being reset.
 
@@ -149,7 +149,7 @@ Within your **step()** method, at a point where your animation has reached it's 
 If you include the parameter **animLoops=True** in your sequence the animation will be **reset()** otherwise it will 
 hold it's current state till duration has expired.
 
-#Pausing Animations
+# Pausing Animations
 
 Animations can be paused before they start and when they have finished (but before the animation loop continues).
 

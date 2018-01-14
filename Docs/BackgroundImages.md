@@ -1,4 +1,4 @@
-#Background Images
+# Background Images
 
 All animations can have background images but you also need to be aware of the layering that takes place
 
@@ -24,7 +24,7 @@ They are rendered to the output buffer in the order added. Consequently the firs
 you add a background image to a later sequence it could overwrite the earlier.
 
 Foreground and background images can be added to animation sequences. Background images are always rendered but only 
-Image Animations use foreground images.
+Image Animations normally use foreground images.
 
 The parameters for a background image are added to a dictionary object and passed into the animation sequence like 
 this:-

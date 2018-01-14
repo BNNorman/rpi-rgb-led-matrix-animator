@@ -1,6 +1,6 @@
-#Requirements
+# Requirements
 
-##software
+## software
 The code was developed on a Windows 10 desktop computer using PyCharm and Anaconda2. I chose Anaconda2 because it had 
 a number of the other dependencies already included.
 
@@ -13,7 +13,7 @@ The code uses the following python libraries:-
 - threading - the simulator runs in it's own thread to try to keep the frame rate up.
 - colorsys - for single pixel hsv to rgb conversion
 
-##hardware
+## hardware
 
 - Raspberry Pi. All testing was done using a Pi 3.
 - HUB75 panels. I used two 64x32 HUB75 panels bought from AliExpress ( Shenzhen Lightall Optoelectronics Co., LTD) 
@@ -26,9 +26,9 @@ keep you informed by email as the boards are being made.) - I recommend you go f
 brightness is an awful lot of current - more than 30A actually, but my display works well and it isn't on full 
 brightness all the time so I got away with it.
 
-##SMD Soldering
+## SMD Soldering
 
-Just a brief tip. Add solder to one component (bus transcievers) pad (on the pcb) then anchor the component using 
+Just a brief tip when soldering the bus tranceivers. Add solder to one pad (on the pcb) then anchor the component using 
 that pad. Then drag solder the rest of the pins. 
 
 You may need a solder sucker to remove bridges but the technique works.

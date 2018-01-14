@@ -1,33 +1,33 @@
-#Image Handling
+# Image Handling
 
-All animations **may** use a background image and a foreground image. Image specific animations also use foreground 
+All animations **may** use a background image **and** a foreground image. Image specific animations also use foreground 
 images. For example the ImageAnimations.DissolveIn dissolves between the foreground and background images by changing the transparency of the
  foreground image to effect either a dissolve in or dissolve out.
   
-When you specify an image in an animation sequence it is loaded and cached by ImageCache.py, in case it may
- be reused. AnimBase.py is responsible for doing the following, in the order given.
+When you specify an image in an animation sequence it is loaded and cached by [ImageCache.py](../../LEDAnimator/ImageCache.py), in case it may
+ be reused. [AnimBase.py](../../LEDAnimator/AnimBase.py) is responsible for doing the following, in the order given.
 
 - 1 transform (affine), if any  
 - 2 scaling, if any
 - 3 alignment, if any    
 
-scaling and transform are different because scaling uses the most appropriate anti-aliasing method depending on 
+Scaling and transform are different because scaling uses the most appropriate anti-aliasing method depending on 
 wether you are scaling the image up or down. You cannot mix both since scaling operates using the original image as 
 the starting point.
 
 Specifying an image is done in the animation sequence definition in this way :-
     
-bgnd=Image{imagePath="../Images/DAF_640_640.png", scaleMode="F", alignMode=("C","C")) 
-fgnd=Image(imagePath="../Images/tulips.jpg",scaleMode"F",alignMode=("C","C"))  
-
-background= AnimSequence.AnimSequence([  
-    ImageAnimations.DissolveIn(duration=10, speed=0.1, fps=100, bgImage=bgnd, fgImage=fgnd)  
-])  
+    bgnd=Image{imagePath="../Images/DAF_640_640.png", scaleMode="F", alignMode=("C","C")) 
+    fgnd=Image(imagePath="../Images/tulips.jpg",scaleMode"F",alignMode=("C","C"))  
+    
+    background= AnimSequence.AnimSequence([  
+        ImageAnimations.DissolveIn(duration=10, speed=0.1, fps=100, bgImage=bgnd, fgImage=fgnd)  
+    ])  
 
 The above will dissolve in  **../Images/tulips.jpg** covering **../Images/DAF_640_640.png**. It will stop dissolving and 
 wait for the duration to expire before repeating
 
-##loadInvisible
+## loadInvisible
 
 The load invisible option is useful when you want to fade in - i.e. start invisible
 
@@ -42,11 +42,11 @@ wait till self.init has been set to False.
             if not self.init: self.refreshCanvas()
             return
 
-##scaleMode and alignMode
+## scaleMode and alignMode
 
 These determine the scaling and placement of the image as follows.
 
-###scaleMode
+### scaleMode
 
 The available modes are:-
 
@@ -60,7 +60,7 @@ Only the first letter is checked so Fart==Fit. LOL
 
 Images are always scaled from the original to maintain the best quality.
 
-###alignMode
+### alignMode
 
 This is a tuple and determines where the image is placed horizontally and vertically.
 
@@ -76,11 +76,11 @@ Vertically:-
 - M(iddle) - centre
 - C(entre) - same as "M"
 
-###debug
+### debug
 
 Setting the parameter **debug=True** will cause the image loading to produce debug messages. If you want them.
 
-#Image Transforms
+# Image Transforms
 
 Transforms and scaling are applied to the original image in order to maintain the best quality. The original image is
  never altered. Consequently you must

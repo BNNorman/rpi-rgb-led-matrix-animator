@@ -1,4 +1,4 @@
-#Rendering
+# Rendering
 
 Animations are rendered to a layer buffer to enable the use of transparency.
 

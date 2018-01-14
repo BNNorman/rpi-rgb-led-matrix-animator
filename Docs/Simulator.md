@@ -1,4 +1,4 @@
-#Simulator
+# Simulator
 
 Whilst developing this code I decided to write a software simulator which could run on my desktop computer so that I 
 didn't have to keep transferring the, rapidly, changing files to my Pi whilst debugging.
@@ -19,11 +19,11 @@ hzeller drivers downloaded from GitHub.
 Of course, if you overburden the simulator your animation timings will suffer. Keep it simple, don't bombard your 
 audience with too much going on.
 
-##Parameters
+## Parameters
 
 Parameters are passed in as kwargs from the main script when the Panel is created like this :-
     
-`Panel.init(rows=PANEL_ROWS, chain_len=PANEL_SERIES, parallel=PANEL_PARALLEL,LEDspacing=5, LEDsize=3, fps=FPS, 
+`Panel.init(rows=PANEL_ROWS, chain_len=PANEL_SERIES, parallel=PANEL_PARALLEL, fps=FPS, 
                debug=True, videoCapture=True, videoName="./ImageDemo {width}x{height}.avi")`
                
 My HUB75 panel is made of two 32x64 main panels stacked one on top of the other making a 64x64 array. Each main panel
@@ -37,10 +37,7 @@ My HUB75 panel is made of two 32x64 main panels stacked one on top of the other 
 
 **_For the simulator :-_**
 
-**LEDspacing**  is the number of on-screen pixels between LEDs. default is 5 to represent my P5 panel
-**LEDSize** is the onscreen dimension of each pixel. Physical P5 panels have gaps bewteen the LEDs. I use a  value of
- 3  (should not be more than LEDspacing - not checked!)
-**scale** is an overall screen-size multiplier (default is 2, increase to make the screen display bigger)
+**scale** is an overall screen-size multiplier (default is 2, increase to make the on-screen display bigger)
 
 **_video recording:-_**
 
@@ -49,11 +46,10 @@ Like to show off your animations? (It can slowdown the screen refresh rate)
 **videoCapture** if True video capturing takes place and records to an avi format file
 **videoName**    default is "HUB75 {width}x{height}.avi" where **{width}** and **{height}** are the number of LEDs. You 
 can also use **{screenWidth}** and **{screenHeight}** in the name
- the
- name begins with **./** the video appears in the same folder as the main script.
+ the name begins with **./** the video appears in the same folder as the main script.
  
  _**Others:-_**  
  
  **fps** frames per second for the animation. Intended to tell the simulator how quickly to refresh the display but now 
  not used. Instead the RGBMatrix refreshes once per millisecond.  
- **debug** allows you to add debugging output from the Panel and RGBMatrix simulator  
+ **debug** allows you to add debugging output from the Panel and RGBMatrix simulator.
