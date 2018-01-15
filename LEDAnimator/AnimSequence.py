@@ -8,14 +8,14 @@ animation in the sequence
 
 class AnimSequence():
 
-    def __init__(self,animList=[]):
-        # animList contains a list of function pointers
-        self.animList=[]
+    animList=[]     # list of animations in the sequence
+    listLen=0       # and how many
+    curAnim=0       # used to getNextAnimation
 
+    def __init__(self,animList=[]):
         for entry in animList:
             self.animList.append(entry)
 
-        self.curAnim=0
         self.listLen=len(animList)
 
         assert self.listLen<>0, "Zero length animation list. Check syntax of your animation sequence."
