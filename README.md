@@ -1,21 +1,24 @@
 # rpi-rgb-led-matrix-animator
+
+NOTE. This is a work in progress at the moment.
+
 Python code to play animation sequences on an RGB LED matrix panel using the HZeller (https://github.com/hzeller/rpi-rgb-led-matrix) drivers on a Raspberry Pi (Model 3 used)
 
 Inspired by the amazing ALA library for the Arduino.
 
 ## Currently supports:-
 
--multiple layers  
--animation sequencing (speed and duration control)  
--transparency  
--foreground and background images or colours    
--chain animations (like a LED strip folded)  
--text animations (like scrolling text messages)  
--image animations like fade in/out, dissolve, blur, blend,  hue change etc    
--panel animations like drawing randomly sized rectangles/ellipses etc  
--affine image transforms  
--image scaling with anti-aliasing  
--BDF and openCV fonts 
+- multiple layers  
+- animation sequencing (speed and duration control)  
+- transparency  
+- foreground and background images or colours    
+- chain animations (like a LED strip folded)  
+- text animations (like scrolling text messages)  
+- image animations like fade in/out, dissolve, blur, blend,  hue change etc    
+- panel animations like drawing randomly sized rectangles/ellipses etc  
+- affine image transforms  
+- image scaling with anti-aliasing  
+- BDF and openCV fonts 
 
 See the docs folder for more information
 
