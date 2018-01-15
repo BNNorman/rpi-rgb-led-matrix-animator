@@ -32,6 +32,8 @@ class AnimBase(object):
 
     background=None         # (r,g,b,a) tuple in Pixel order default None
                             # if set then the Panel is filled before images are laid down.
+                            # if it is a Palette then the background color is chosen cyclically
+                            # from the palette
 
     fps = 100               # default animation rate (passed in)
     speed = 1.0             # normal speed
@@ -228,10 +230,14 @@ class AnimBase(object):
         :return: True if the duration has expired otherwise false
         """
 
+        # waiting for animation to be reset?
+        if self.durationStart is None:
+            return False
+
         # time is up, we move on to the next animation in the sequence
-        if (time.time()-self.durationStart)>=self.duration:
-            self.durationStart=None
-            if self.debug: print "AnimBase.nextFrame() duration has expired for",self.animationClass()
+        if (time.time() - self.durationStart) >= self.duration:
+            self.durationStart = None
+            if self.debug: print "AnimBase.nextFrame() duration has expired for", self.animationClass()
             return True
 
         # animationFinished is set by the animation to halt/freeze it till the duration has expired
@@ -286,7 +292,7 @@ class AnimBase(object):
             self.speed = wanted
 
     #TODO remove this? I have not used it
-    def setInfo(self,**kwargs):
+    def UNUSED_setInfo(self,**kwargs):
         """
         setInfo allows the program to dynamically change parameters at runtime.
         parameter names are not checked so caller must take responsibility
@@ -301,17 +307,9 @@ class AnimBase(object):
         self.setSpeed(self.speed)   # may have changed, needs checking
 
     # TODO - is this needed if it's done in nextFrame before step() is called
-
-    def calcTick(self):
+    def UNUSED_splitCoordList(self,coordList):
         """
-        depracted
-        :return:
-        """
-        return self.tick
-
-    def splitCoordList(self,coordList):
-        """
-        utility routine to split a list of coordinates into two sepearte lists
+        utility routine to split a list of coordinates into two seperate lists
         of x and y which can be used to select pixels in an image using numpy
         like arr[x,y]=somevalue to avoid iterating in Python
         This is meant to be used once for lists like LEDs chains when the animation
@@ -436,7 +434,7 @@ class AnimBase(object):
 
 
     # TODO is this needed/used
-    def drawPixel(self, x, y, colour):
+    def UNUSED_drawPixel(self, x, y, colour):
         """
         Draw a pixel, currently ignoring trnasparency on the panel.
         Overwrites anything already at x,y
