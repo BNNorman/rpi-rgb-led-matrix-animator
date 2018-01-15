@@ -33,7 +33,7 @@ class Animator(object):
         for key,value in kwargs.iteritems():
             setattr(self,key,value)
 
-        self.animations.append(AnimInfo(chain=self.chain,animSeq=self.seq,fps=self.fps))
+        self.animations.append(AnimInfo(chain=self.chain,animSeq=self.seq,fps=self.fps,debug=self.debug))
 
     def setFPS(self,fps):
         """
@@ -113,9 +113,8 @@ class Animator(object):
             # work out if we need to wait before the next loop
             loopTime=time.clock() - t0
 
-            # check if
-            verbose=False
-            if (loopTime>frameInterval) and not self.debug and verbose:
+            # check if the loop time was exceeded
+            if (loopTime>frameInterval) and not self.debug:
                 print self.classname+".run() Animation frame interval exceeded - check animation durations. Total loopTime=",loopTime,"frameInterval=",frameInterval
                 self.debug=True
                 print "Animator debugging turned on to aid diagnosis."
