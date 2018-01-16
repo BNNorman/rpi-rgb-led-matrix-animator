@@ -28,11 +28,6 @@ class Sparkle(ChainAnimBase):
     """
     randomly selects a color from the supplied palette and uses it to color a random pixel at a random brightness
     """
-    def __init__(self,**kwargs):
-        super(Sparkle,self).__init__(**kwargs)
-
-    def reset(self,**kwargs):
-        super(Sparkle, self).reset(**kwargs)
 
     def step(self):
         if self.isNotNextStep():
@@ -52,11 +47,6 @@ class SparkleRandom(ChainAnimBase):
     """
     Same as SPARKLE but selects a random color - palette is ignored
     """
-    def __init__(self,**kwargs):
-        super(SparkleRandom,self).__init__(**kwargs)
-
-    def reset(self,**kwargs):
-        super(SparkleRandom,self).reset(**kwargs)
 
     def step(self):
         if self.isNotNextStep():
@@ -83,16 +73,9 @@ class Comet(ChainAnimBase):
     direction=1          # low to high (left to right)
     multiColored=False  # if true uses the entire palette otherwise picks one color
 
-    def __init__(self,**kwargs):
-        super(Comet,self).__init__(**kwargs)
-        self.init=True  # next step intialises the pattern
 
     def setTailLength(self,length):
         self.tailLen=length
-
-    def reset(self,**kwargs):
-        super(Comet,self).reset(**kwargs)
-        self.init=True
 
     def step(self):
         if self.isNotNextStep():
@@ -140,12 +123,6 @@ class Comets(ChainAnimBase):
     multiColored=False # use first entry then next etc
     tailLen=None        # use the palette length
 
-    def __init__(self,**kwargs):
-        super(Comets,self).__init__(**kwargs)
-
-    def reset(self,**kwargs):
-        super(Comets,self).reset(**kwargs)
-
     def step(self):
         if self.isNotNextStep():
             self.refreshCanvas()
@@ -191,10 +168,7 @@ class Pulse(ChainAnimBase):
     # to turn LEDS on or Off
 
     duty=25
-
-    def __init__(self,**kwargs):
-        super(Pulse,self).__init__(**kwargs)
-        self.reset()
+    ledsOn=False
 
     def reset(self,**kwargs):
         super(Pulse,self).reset(**kwargs)
@@ -230,13 +204,6 @@ class Pulse(ChainAnimBase):
 # if palette contains only one color then Alt color is black
 # otherwise first two colors are used
 class AltOnOff(ChainAnimBase):
-
-    def __init__(self,**kwargs):
-        super(AltOnOff,self).__init__(**kwargs)
-        self.reset()
-
-    def reset(self,**kwargs):
-        super(AltOnOff,self).reset(**kwargs)
 
     def step(self):
         if self.isNotNextStep():
@@ -299,14 +266,6 @@ class Fade(ChainAnimBase):
     brightness=0       # current brightnessinance
     c=None
 
-    def __init__(self,**kwargs):
-        super(Fade,self).__init__(**kwargs)
-        self.reset()
-
-    def reset(self,**kwargs):
-        super(Fade,self).reset(**kwargs)
-        self.init=True
-
     def step(self):
         if self.isNotNextStep():
             self.refreshCanvas()
@@ -336,37 +295,20 @@ class FadeIn(Fade):
 
     direction=1
 
-    def __init__(self,**kwargs):
-        super(FadeIn, self).__init__(**kwargs)
-        self.reset()
-
-    def reset(self,**kwargs):
-        super(FadeIn,self).reset(**kwargs)
-
 class FadeOut(Fade):
     direction = -1
 
-    def __init__(self, **kwargs):
-        super(FadeOut, self).__init__(**kwargs)
-        self.reset()
-
-    def reset(self, **kwargs):
-        super(FadeOut, self).reset(**kwargs)
 
 # FADE-IN-OUT
 class FadeInOut(Fade):
 
     direction=1 # initial is to fade in
 
-    def __init__(self,**kwargs):
-        super(FadeInOut, self).__init__(**kwargs)
-        self.reset()
-
     def reset(self,**kwargs):
         super(FadeInOut,self).reset(**kwargs)
+        # initialise the brightness and direction at reset
         self.brightness = 0
         self.direction=True # True=fade in, False=Fadeout
-        self.init=True
 
     def step(self):
         super(FadeInOut,self).step()
@@ -378,32 +320,28 @@ class FadeInOut(Fade):
             self.direction=-1
             self.init=True
 
+        # super refreshes the canvas
+
+
 
 # WAIT - does nothing but wait
 class Wait(ChainAnimBase):
-    def _init__(self,**kwargs):
-        super(Wait,self).__init__(**kwargs)
-
-    def reset(self,**kwargs):
-        super(Wait,self).reset(**kwargs)
 
     def step(self):
-        pass
+        self.refreshCanvas()
 
 # Larson scanner - same as Knight Rider car (ish)
 class Larson(ChainAnimBase):
+    """
+    Larson scanner as seen on the front of the car Kit in Knight Rider
+
+    Cycles through the supplied palette.
+    """
 
     # user parameters
     larsonSize=2                # half the chain length
     larsonLen=0
     larsonBackground=(0,0,0,0)  # transparent black
-
-    def _init__(self,**kwargs):
-        super(Larson,self).__init__(**kwargs)
-        self.reset()
-
-    def reset(self,**kwargs):
-        super(Larson,self).reset(**kwargs)
 
     def step(self):
         if self.isNotNextStep():
@@ -451,8 +389,12 @@ class Larson(ChainAnimBase):
         self.refreshCanvas()
 
 class KnightRider(Larson):
-    def __init__(self,**kwargs):
-        super(KnightRider,self).__init__(**kwargs)
+    """
+    Alternative name for Larson and maybe easier to remember
+    """
+
+    pass
+
 
 # COLLIDER - comets come in from both ends
 # and smash in the middle
@@ -462,26 +404,17 @@ class Collider(ChainAnimBase):
     collided=False  # set when the collision has happened
     tailLen=5
 
-    def __init__(self,**kwargs):
-        super(Collider, self).__init__(**kwargs)
-        self.reset()
-
-    def reset(self,**kwargs):
-        super(Collider, self).reset(**kwargs)
-        self.init = True
-        self.fading=False
-        self.chainPos=0
-        self.collided=False
-
     def step(self):
         if self.isNotNextStep():
             self.refreshCanvas()
             return
 
         if self.init:
-            self.collided=False
+            self.fading = False
+            self.chainPos = 0
+            self.collided = False
+
             self.brightness=1.0
-            self.fading=False
             self.chain.setAllPixels(Black.getPixelColor(alpha=0))  # all transparent
             self.chain.setChainBrightness(1.0)
             self.chain.setChainAlpha(1.0)       # must start visible for colliding comets
@@ -547,13 +480,6 @@ class WipeIn(ChainAnimBase):
     """
     c=None          # current color being used
 
-    def __init__(self,  **kwargs):
-        super(WipeIn, self).__init__( **kwargs)
-        self.reset()
-
-    def reset(self,**kwargs):
-        super(WipeIn, self).reset(**kwargs)
-        self.init = True
 
     def step(self):
         if self.isNotNextStep():
@@ -624,8 +550,6 @@ class WipeOut(ChainAnimBase):
 
         self.refreshCanvas()
 
-#TODO bug in wipe - orphaned pixel at left
-
 class Wipe(ChainAnimBase):
     """
     Wipe is the base class for WipeLeft and WipeRight
@@ -637,15 +561,6 @@ class Wipe(ChainAnimBase):
     direction=True  # default is wipe right
     chainLen=0
     multiColored=False
-
-    def __init__(self, **kwargs):
-        super(Wipe, self).__init__( **kwargs)
-        self.direction=True # wipe right
-        self.reset()
-
-    def reset(self,**kwargs):
-        super(Wipe, self).reset(**kwargs)
-        self.init = True
 
     def step(self):
         if self.isNotNextStep():
@@ -681,12 +596,11 @@ class Wipe(ChainAnimBase):
         self.refreshCanvas()
 
 class WipeRight(Wipe):
-    def __init__(self,  **kwargs):
-        super(WipeRight, self).__init__( **kwargs)
-        self.direction = True
+
+    direction=True
+
 
 class WipeLeft(Wipe):
-    def __init__(self, **kwargs):
-        super(WipeLeft, self).__init__( **kwargs)
-        self.direction = False
+
+    self.direction = False
 
