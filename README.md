@@ -1,6 +1,6 @@
 # rpi-rgb-led-matrix-animator
 
-NOTE. This is a work in progress at the moment.
+##NOTE. This is a work in progress at the moment.
 
 Python code to play animation sequences on an RGB LED matrix panel using the HZeller (https://github.com/hzeller/rpi-rgb-led-matrix) drivers on a Raspberry Pi (Model 3 used)
 
@@ -31,9 +31,21 @@ help my tiny pension.
 
 ## Requirements
 
-Raspberry Pi
-HZeller interface for the HUB75 panels (See OSH Park for pcbs for the active controller)  
-The code is written for Python 2 and requires openCV, numpy, matplotlib, PIL (or pillow).
+Hardware:-
+- Raspberry Pi (I tested using the Pi3)
+- HZeller interface for the HUB75 panels (See OSH Park for pcbs for the active controller)
+- HUB75 RGB LED Panel
+  
+The code is written in Python 2.7 and requires :-
+- openCV
+- numpy 
+- matplotlib
+- PIL (or pillow).
+- HZeller interface drivers
+
+NOTE: I developed this using PyCharm and Anaconda 2. Anaconda has all the packages required already installed except 
+the HZeller drivers.
+
 
 On the Raspberry Pi you need to install the HZeller drivers (https://github.com/hzeller/rpi-rgb-led-matrix)
 
