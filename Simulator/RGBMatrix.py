@@ -71,7 +71,7 @@ class RGBMatrix(object):
             print "RGBMatrix: Recording video to ",fname
             self.startVideo(fname)
         else:
-            print "RGBMatrix: Not recoding video"
+            print "RGBMatrix: Not recording video"
 
         # display updates done in another thread
         self.thread = threading.Thread(None, self.run)
