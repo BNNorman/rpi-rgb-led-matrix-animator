@@ -1,10 +1,9 @@
 """
 UtilLib.py
 
-Library for merging two images with alpha transparency
+Library with a variety of general purpose routines
 
 """
-
 
 import numpy as np
 
@@ -255,15 +254,11 @@ def nearest(n):
 
     WARNING, this method is vectorised to handle a numpy array by NumpyImage
 
-    :param float or numpy ndarray n: virtual pixel position (x or y)
+    :param a number or array of numbers: virtual pixel position (x or y)
     :return int: nearest integer (round up/down)
     """
-    assert type(n) is int or type(n) is float or type(n) is np.int32 or type(n) is np.float64,"nearest(n) n should be " \
-                                                                                             "a " \
-                                                                                      "number got "+str(
-        n)+"type="+str(
-        type(n))
-    if type(n) is int:    n*=1.0 # make sure n is a float
+
+    n=float(n) # make sure n is a float
     return int(round(n,0))
 
 def pasteOpaqueAt( bg, x, y, im):
