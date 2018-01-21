@@ -13,7 +13,8 @@ import colorsys
 from Constants import *
 import re
 import random
-
+from ExceptionErrors import *
+from UtilLib import *
 
 
 ###########################################################
@@ -22,23 +23,6 @@ import random
 #
 ###########################################################
 
-def uint8(n):
-    """
-    convert a float from range 0->1.0 to 0->255 (int)
-    :param float n:
-    :return int: n m,apped to 0->255 range
-    """
-    return int(round(n*255, 0))
-
-def float8(n):
-    """
-    map n from 0->255 to 0->1.0 range
-    :param in n: range 0 to 255
-    :return float: n mapped to 0->1.0
-    """
-    # colorsys uses float values ranging 0.0->1.0
-    # this scales a LED value and returns a float
-    return n / 255.0
 
 class Color():
     """
@@ -84,7 +68,12 @@ class Color():
         G=float8(int(col[2:4], 16))
         B=float8(int(col[4:6], 16))
 
-        self.H, self.S, self.V = colorsys.rgb_to_hsv(R, G, B)
+        # if BGR format - swap the R&B channels (Royal pain)
+        if RGB_R==0:
+            self.H, self.S, self.V = colorsys.rgb_to_hsv(R, G, B)
+        else:
+            self.H, self.S, self.V = colorsys.rgb_to_hsv(B, G, R)
+
 
     def hsva2PixelColor(self,hsv):
         """
@@ -148,6 +137,11 @@ class Color():
         (r,g,b)=colorsys.hsv_to_rgb(H,S,V*brightness)
         color=(uint8(r),uint8(g),uint8(b),uint8(alpha))
         return self.rgba2PixelColor(color)
+
+
+
+
+
 
 '''
 www.w3schools.com standard web colors
