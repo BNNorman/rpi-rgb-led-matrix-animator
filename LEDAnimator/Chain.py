@@ -61,6 +61,7 @@ class Chain():
     brightness=1.0  # brightness multiplier for the whole chain
     alpha=1.0       # overall chain transparency - useful for fade out/in
     AAmethod=None   # which antiAlias method to use
+    debug=False
 
     def __init__(self,xyList,antiAliasMethod=None):
         """
@@ -79,7 +80,7 @@ class Chain():
             self.y = np.array(y)
             self.alias=np.array(v)
             self.hsv = np.zeros((len(x), 5), dtype=np.float)
-            self.hsv[...,ALIAS] = v  # whatever the AA routine choses
+            self.hsv[...,ALIAS] = v  # whatever the AA routine chooses
         else:
             # split the xyList into two
             xList,yList=zip(*xyList)
@@ -88,7 +89,7 @@ class Chain():
             self.alias=np.array(xList)
             self.hsv = np.zeros((len(xList), 5), dtype=np.float)
             self.hsv[:,ALIAS] = 1.0  # brightness or alpha multiplier
-            self.hsv[:,ALPHA]=0.0               # transparent
+            self.hsv[:,ALPHA]=0.0    # transparent
 
         self.lenChain=len(xyList)
         self.curPos=0
@@ -202,7 +203,7 @@ class Chain():
         h,s,v=colorsys.rgb_to_hsv(colour[RGB_R]/255.0,colour[RGB_G]/255.0,colour[RGB_B]/255.0)
 
         # only affect channels upto but not including AntiAlias factor
-        self.hsv[...,:ALIAS]=[h,s,v,colour[ALPHA]/255.0]
+        self.hsv[n,:ALIAS]=[h,s,v,colour[ALPHA]/255.0]
 
 
     def getPixelXY(self,n):
@@ -325,7 +326,7 @@ class Chain():
         if fill is not None:
             r, g, b, a = fill
             h, s, v = colorsys.rgb_to_hsv(r / 255.0, g / 255.0, b / 255.0)
-            self.hsv[-steps:,ALIAS] = [h, s, v, a / 255.0]
+            self.hsv[-steps:,:ALIAS] = [h, s, v, a / 255.0]
 
     def shiftIn(self,steps=1,fill=(0,0,0,255)):
         """
@@ -342,8 +343,8 @@ class Chain():
             r, g, b, a = fill
             h, s,v = colorsys.rgb_to_hsv(r / 255.0, g / 255.0, b / 255.0)
             a=a/255.0
-            self.hsv[:steps,ALIAS] = [h,s,v,a]
-            self.hsv[-steps:,ALIAS] = [h,s,v,a]
+            self.hsv[:steps,:ALIAS] = [h,s,v,a]
+            self.hsv[-steps:,:ALIAS] = [h,s,v,a]
 
     def shiftOut(self, steps=1,fill=(0,0,0,255)):
         """
