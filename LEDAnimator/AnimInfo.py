@@ -3,21 +3,23 @@ AnimInfo.py
 
 Class to hold generic information about an animation
 
-Used by the Animator object. nextFrame() is called once per frame to allow the
-animation to step through its sequence.
+Used by Animator.
 
 """
 
 
 class AnimInfo(object):
     classname = "AnimInfo"
-
-    chain = None        # passed in if needed
-    animSeq = None      # current animation sequence
-    animFunc = None     # current animation function
-    beginDone = False   # has begin been called to initialise the animation on first pass?
-
-
+    chain = None  # not used for non-chain based animations
+    animSeq = None
+    fps = None
+    animFunc = None
+    beginDone = False  # has begin been called?
+    #canvas = None
+    #matrix = None  # in case the animation needs a private canvas
+    curPalEntry = 0
+    palette = None
+    simulating = False  # default
     debug = False
 
     def __init__(self,**kwargs):
@@ -28,32 +30,49 @@ class AnimInfo(object):
         for key,value in kwargs.iteritems():
             setattr(self,key,value)
 
-    def nextFrame(self):
+    def begin(self):
+        """
+        begin() is called once for each animation in a sequence to allow it to do any pre-run setup.
+        It selects the next animation in a sequence, cycling back to the first then calls the animation's reset() function.
+        :return: nothing, simply sets self.animFunc and calls reset()
+        """
+
+        self.animFunc=self.animSeq.getNextAnimation()
+
+        # initialise the animation for first run
+        self.animFunc.durationExpired=False
+        self.animFunc.reset()
+
+        # flag to ensure that the animation has been initialised for first run
+        self.beginDone=True
+
+
+
+    def nextFrame(self,debug=False):
         """
         called from Animator.run()
         iterates through the animation calling the reset() and step() functions
         :return: Nothing
         """
 
+        self.debug=debug
+
         # initialise the next animation - setup animFunc
-        # this call should only happen on first run
-        if not self.beginDone:
-            self.animFunc = self.animSeq.getNextAnimation(debug=self.debug)
-            # initialise the animation for first run
-            self.animFunc.reset()
-            self.beginDone=True
+        #if not self.beginDone: self.begin()
+
+        #time to move to next animation in the sequence?
+        #if self.animFunc.durationExpired:
+        #    if self.debug:
+        #        print "AnimInfo.nextFrame() calling begin() for next animation in seq"
+        #    self.begin()
+
+        if self.animFunc is None:
+            self.animFunc = self.animSeq.getNextAnimation()
+
 
         # chain is ignored by non-chain based animations
-        # animFunc.nextFrame returns False until the duration has expired
-        if self.chain and self.animFunc.chain is None:
-            self.animFunc.chain=self.chain
-
-        if self.animFunc.nextFrame():
-            if self.debug:
-                print self.classname+".nextFrame() animation duration HAS expired for",self.animFunc
-
-            # move on to next animation in the sequence
-            self.animFunc = self.animSeq.getNextAnimation(debug=self.debug)
-            self.animFunc.reset()
-
+        if self.debug: print "AnimInfo.nextFrame() Calling nextFrame() for",self.animFunc
+        self.animFunc.chain=self.chain
+        if self.animFunc.nextFrame(self.debug):
+            self.animFunc = self.animSeq.getNextAnimation()
 
