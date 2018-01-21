@@ -32,8 +32,6 @@ class AnimBase(object):
 
     background=None         # (r,g,b,a) tuple in Pixel order default None
                             # if set then the Panel is filled before images are laid down.
-                            # if it is a Palette then the background color is chosen cyclically
-                            # from the palette
 
     fps = 100               # default animation rate (passed in)
     speed = 1.0             # normal speed
@@ -41,6 +39,7 @@ class AnimBase(object):
 
     duration = 2            # something to work with if omitted
     durationStart=None      # used to determine if duration has expired, set by reset(), cleared by nextFrame()
+
     palette = None          # list of colours. Currently only used for chain and text animations
 
     animLoops=False         # play once and stop - animation must check it, true enables repetition before duration expires
@@ -60,7 +59,6 @@ class AnimBase(object):
     layerBuffer=None        # all animations are render to this first then merged with the Panel frameBuffer
 
     chain=None              # any animated chain
-    chainBuffer=None
     startPause=0            # parameters which may be used to delay the start after a reset()
     endPause=0              # or the restart() after the animation has ended
 
@@ -98,13 +96,31 @@ class AnimBase(object):
         """
         return self.__class__.__name__
 
+    def _Debug(self,msg):
+        """
+        Simple debug message formatter
+        :param msg:
+        :return:
+        """
+        if not self.debug: return
+        self._Warning(msg)
+
+    def _Warning(self,msg):
+        """
+        Issue a warning message - ignores self.debug
+        :param str msg:
+        :return None:
+        """
+        print self.id, msg, "Animation=", self.__class__.__name__
+
+
     def loadImage(self,which):
         # anything to do?
         if which is None: return
 
         # already loaded?
         if isinstance(which.image,NumpyImage.NumpyImage):
-            if self.debug: print "AnimBase.loadImage() already loaded"
+            self._Debug("AnimBase.loadImage() already loaded")
             which.reset()   # image may have been fiddled with (TheMatrix and Roll, Dissolve)
             return
 
@@ -128,26 +144,26 @@ class AnimBase(object):
 
         :return bool: True or False
         """
-        if self.debug: print "AnimBase.endPaused() checking for",self.animationClass()
 
         if not self.animationFinished:
-            if self.debug: print "AnimBase.endPaused() animation not finished for", self.animationClass()
+            self._Debug("AnimBase.endPaused() is False")
             return False
 
         if self.animationFinished and self.animLoops:
-            if self.debug: print "AnimBase.animationHasFinished() animLoops is True for",self.animationClass()
+            self._Debug("AnimBase.animationHasFinished() animLoops is True")
             self.reset()
+            return False
 
         if self.animationFinishedTime is None:
-            if self.debug: print "AnimBase.endPaused() finishedTime is not set for",self.animationClass()
+            self._Debug("AnimBase.endPaused() finishedTime is not set")
             return False
 
         if (time.time()-self.animationFinishedTime)<self.endPause:
-            if self.debug: print "AnimBase.endPaused() is True for",self.animationClass()
+            self._Debug("AnimBase.endPaused() is True")
             self.refreshCanvas()
             return True
 
-        if self.debug: print "AnimBase.endPaused() has ended for",self.animationClass()
+        self._Debug("AnimBase.endPaused() has ended.")
         return False
 
     def startPaused(self):
@@ -163,10 +179,10 @@ class AnimBase(object):
         """
         if (time.time()-self.startTime)<self.startPause:
             self.refreshCanvas()
-            if self.debug: print "AnimBase.startPaused() is True for",self.animationClass()
+            self._Debug("AnimBase.startPaused() is True.")
             return True
 
-        if self.debug: print "AnimBase.startPaused() is False for",self.animationClass()
+        self._Debug("AnimBase.startPaused() is False.")
         return False
 
     def animationHasFinished(self):
@@ -179,15 +195,18 @@ class AnimBase(object):
         :return:
         """
         #TODO - think about this - it has to work for all animations
-        if self.debug: print "AnimBase.animationHasFinished() for",self.animationClass()
+        self._Debug("AnimBase.animationHasFinished()")
+
+        if self.animationFinished: return
+
         self.animationFinished=True
         self.animationFinishedTime=time.time()
 
         if self.endPause is not None:
-            if self.debug: print "AnimBase.animationHasFinished() endPause is active for",self.animationClass()
+            self._Debug("AnimBase.animationHasFinished() endPause is active.")
             return
 
-        if self.debug: print "AnimBase.animationHasFinished() animLoops is",self.animLoops,"for",self.animationClass()
+        self._Debug("AnimBase.animationHasFinished() animLoops is "+str(self.animLoops))
 
         if self.animLoops:  self.reset()
 
@@ -200,7 +219,7 @@ class AnimBase(object):
         :return: nothing
         """
 
-        if self.debug: print "AnimBase.reset() called for",self.animationClass()
+        self._Debug("AnimBase.reset() called.")
         # gather any passed in values
         for key, value in kwargs.iteritems():
             setattr(self, key, value)
@@ -222,32 +241,17 @@ class AnimBase(object):
 
         self.init=True  # tells the animation to initialise itself
 
-    def nextFrame(self):
+    def nextFrame(self,id="[No id]",debug=False):
         """
         calculates the current value of self.tick based on the speed of the animation then calls the animation's step()
         function to move the animation on
         :param chain: only used by chain animations (default None)
         :return: True if the duration has expired otherwise false
         """
+        self.id=id
+        self.debug=debug
 
-        # waiting for animation to be reset?
-        if self.durationStart is None:
-            return False
-
-        # time is up, we move on to the next animation in the sequence
-        if (time.time() - self.durationStart) >= self.duration:
-            self.durationStart = None
-            if self.debug: print "AnimBase.nextFrame() duration has expired for", self.animationClass()
-            return True
-
-        # animationFinished is set by the animation to halt/freeze it till the duration has expired
-        # however, setting animLoops to True resets the animation so it can loop
-        #if self.animationFinished:
-            #print "AnimBase.nextFrame() animation has finished for "+self.animationClass()
-            #if self.animLoops: self.reset()
-
-        if self.startPaused():  return False
-        if self.endPaused():  return False
+        self._Debug("AnimBase.nextFrame() called.")
 
         # update the current tick value
         t=time.time()-self.startTime    # interval since start
@@ -258,10 +262,38 @@ class AnimBase(object):
         # at speed=0.5 it counds 0,0,1,1,2,2,3,3,4,4 ...
         # animations should use the value of self.tick to control their speed
         self.tick=int(self.speed*ticks) % self.fps
+        self._Debug("tick="+str(self.tick)+"ticks="+str(ticks))
+
+        # waiting for animation to start?
+        if self.durationStart is None:
+            self._Debug("AnimBase.nextFrame() durationStart is None.")
+            self.reset()
+
+        # time is up, we move on to the next animation in the sequence
+        if (time.time()-self.durationStart)>=self.duration:
+            self.durationStart=None
+            self._Debug("AnimBase.nextFrame() duration has expired.")
+            return True
+
+        # animationFinished is set by the animation to halt/freeze it till the duration has expired
+        # however, setting animLoops to True resets the animation so it can loop
+        #if self.animationFinished:
+            #print "AnimBase.nextFrame() animation has finished for "+self.animationClass()
+            #if self.animLoops: self.reset()
+
+        if self.startPaused():
+            self._Debug("Animbase.nextFrame() startPaused() returned True")
+            return False
+        if self.endPaused():
+            self._Debug("Animbase.nextFrame() endPaused() returned True")
+            return False
+
+        self._Debug("AnimBase.nextFrame() calling step()")
 
         # call the animation step() function to move it on
         self.step()
 
+        self._Debug("AnimBase.nextFrame() finishing after calling step() returning False")
         # false indicates the animation duration has not expired
         return False
 
@@ -291,35 +323,6 @@ class AnimBase(object):
         else:
             self.speed = wanted
 
-    #TODO remove this? I have not used it
-    def UNUSED_setInfo(self,**kwargs):
-        """
-        setInfo allows the program to dynamically change parameters at runtime.
-        parameter names are not checked so caller must take responsibility
-        for spelling etc.
-        :param kwargs: key/value pairs
-        :return: Nothing
-        """
-        for key,value in kwargs.iteritems():
-            if self.debug: print "AnimBAse.setInfo got key=",key,"value=",value
-            setattr(self,key,value)
-
-        self.setSpeed(self.speed)   # may have changed, needs checking
-
-    # TODO - is this needed if it's done in nextFrame before step() is called
-    def UNUSED_splitCoordList(self,coordList):
-        """
-        utility routine to split a list of coordinates into two seperate lists
-        of x and y which can be used to select pixels in an image using numpy
-        like arr[x,y]=somevalue to avoid iterating in Python
-        This is meant to be used once for lists like LEDs chains when the animation
-        first runs
-        :param coordList: [[x0,y0],[x1,y1],..[xn,yn]]
-        :return: x=[x0,x1..xn],y=[y0,y1,...yn]
-        """
-        x,y=zip(*coordList)
-        return x,y
-
     def drawChainOnLayerBuffer(self):
         """
         Chain colours are held as HSV they need to be converted to Pixel colours
@@ -327,9 +330,10 @@ class AnimBase(object):
         ALPHA is ignored because the pixel is written direct to the Panel
 
 
-        :return:
+        :return None: layerBuffer is updated
 
         """
+
         x,y,data=self.chain.getAllPixels()
         self.layerBuffer.setPixel(x, y, data)
 
@@ -338,6 +342,8 @@ class AnimBase(object):
         controls the speed of the animation
         :return:  returns True if the animation should not step
         """
+        self._Debug("AnimBase.isNotNextStep() lastTick="+str(self.lastTick)+"this tick="+str(self.tick))
+
         if self.lastTick==self.tick:
             return True
         self.lastTick=self.tick
@@ -412,36 +418,30 @@ class AnimBase(object):
         """
 
         # clear the layer buffer amd make sure it's transparent
+        # so that lower layers show through
+        self._Debug("AnimBase.refreshCanvas() begins")
         self.layerBuffer.clear()
 
         # has itr got a simple background color?
         if self.background is not None:
+            self._Debug("AnimBase.refreshCanvas() background fill.")
             self.layerBuffer.fill(self.background)
 
         # or has it got a background image?
         if self.bgImage is not None and self.bgImage.image is not None:
+            self._Debug( "AnimBase.refreshCanvas() doing bgImage")
             X,Y=self.bgImage.getPosition()
             pasteWithAlphaAt(self.layerBuffer.getImageData(),X, Y, self.bgImage.getImageData())
 
         if self.fgImage is not None and self.fgImage.image is not None:
+            self._Debug( "AnimBase.refreshCanvas() doing fgImage.")
             X,Y=self.fgImage.getPosition()
             pasteWithAlphaAt(self.layerBuffer.getImageData(),X, Y, self.fgImage.getImageData())
 
         if self.chain is not None:
+            self._Debug("AnimBase.refreshCanvas() doing chain.")
             self.drawChainOnLayerBuffer()
 
         Panel.DrawImage(0,0,self.layerBuffer.getImageData())
 
-
-    # TODO is this needed/used
-    def UNUSED_drawPixel(self, x, y, colour):
-        """
-        Draw a pixel, currently ignoring trnasparency on the panel.
-        Overwrites anything already at x,y
-
-        :param float x: coord of pixel
-        :param float y: coord of pixel
-        :param tuple colour: (r,g,b,a) in Pixel colour order
-        :return: Nothing
-        """
-        Panel.DrawPixel(x, y, colour)
+        self._Debug("AnimBase.refreshCanvas() finished.")
