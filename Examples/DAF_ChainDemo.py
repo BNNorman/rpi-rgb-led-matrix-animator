@@ -46,7 +46,7 @@ Panel.init(rows=PANEL_ROWS, chain_len=PANEL_SERIES, parallel=PANEL_PARALLEL,  fp
            videoName="DAF_ChainDemo.avi",debug=DEBUG)
 
 # chain definitions for the logo
-import DAF_Chain_Data
+from DAF_Chain_Data import *
 
 
 print("Initialising animation sequences. Please wait....")
@@ -81,11 +81,11 @@ DAF_CROSS_SEQ= AnimSequence.AnimSequence([
     ChainAnimations.Sparkle(duration=5, speed=Speed, palette=Palette.XMAS, fps=FPS)
 ])
 
-DAF_OUTERRING_SEQ= AnimSequence.AnimSequence([
+DAF_OUTERCIRCLE_SEQ= AnimSequence.AnimSequence([
     ChainAnimations.CometsRight(duration=5, speed=Speed, palette=Palette.BLUE, fps=FPS)
 ])
 
-DAF_INNERRING_SEQ= AnimSequence.AnimSequence([
+DAF_INNERCIRCLE_SEQ= AnimSequence.AnimSequence([
     ChainAnimations.CometsLeft(duration=5, speed=Speed, palette=Palette.GREEN, fps=FPS)
 ])
 
@@ -101,25 +101,20 @@ background= AnimSequence.AnimSequence([
     ImageAnimations.Place(duration=5, speed=0.1, palette=Palette.RGB, fps=FPS, imagePath="../images/DAF_640_640.png")
 ])
 
-
-# My matrix panel is made of two 32x32 matrices in series (but manufactured as a single item)
-# there are two of these in parallel giving a 64x64 matrix
-# So that's 2 of 32x32 panels in series and 2 of those parallel hence 2,32,2
-# for the simulator led spacing is 5mm (pixels) and each is 5mm square
-
+# contruct the Animator objecct
 
 A= Animator.Animator(fps=FPS,debug=True)
 
+# first three show how to turn on debug and tag messages with ids
+A.addAnimation(chain=Chain(DAF_D),seq=DAF_D_SEQ, id="DAF_D_SEQ",debug=DEBUG)
+A.addAnimation(chain=Chain(DAF_A),seq=DAF_A_SEQ,id="DAF_A_SEQ",debug=DEBUG)
+A.addAnimation(chain=Chain(DAF_F),seq=DAF_F_SEQ,id="DAF_F_SEQ",debug=DEBUG)
 
-#A.addAnimation(seq=background)  # bg images must be laid down first
-A.addAnimation(chain=Chain(LOGO_D),seq=DAF_D_SEQ, id="DAF_D_SEQ")
-A.addAnimation(chain=Chain(LOGO_A),seq=DAF_A_SEQ,id="DAF_A_SEQ")
-A.addAnimation(chain=Chain(LOGO_F),seq=DAF_F_SEQ,id="DAF_F_SEQ")
-A.addAnimation(chain=Chain(LOGO_LEFTWING),seq=DAF_LEFTWING_SEQ)
-A.addAnimation(chain=Chain(LOGO_RIGHTWING),seq=DAF_RIGHTWING_SEQ)
-A.addAnimation(chain=Chain(LOGO_CROSS),seq=DAF_CROSS_SEQ)
-A.addAnimation(chain=Chain(LOGO_OUTERRING),seq=DAF_OUTERRING_SEQ)
-A.addAnimation(chain=Chain(LOGO_INNERRING),seq=DAF_INNERRING_SEQ)
+A.addAnimation(chain=Chain(DAF_LEFTWING),seq=DAF_LEFTWING_SEQ)
+A.addAnimation(chain=Chain(DAF_RIGHTWING),seq=DAF_RIGHTWING_SEQ)
+A.addAnimation(chain=Chain(DAF_CROSS),seq=DAF_CROSS_SEQ)
+A.addAnimation(chain=Chain(DAF_OUTERCIRCLE),seq=DAF_OUTERCIRCLE_SEQ)
+A.addAnimation(chain=Chain(DAF_INNERCIRCLE),seq=DAF_INNERCIRCLE_SEQ)
 
 
 
