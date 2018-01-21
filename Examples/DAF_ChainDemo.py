@@ -1,7 +1,7 @@
 
 '''
 
-DAFchain.py - used to run a DAF Logo chain animation on a LED panel
+DAF_ChainDemo.py - used to run a DAF Logo chain animation on a LED panel
 
 
 Copyright (C) 2017 Brian Norman, brian.n.norman@gmail.com
