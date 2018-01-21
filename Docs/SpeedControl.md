@@ -9,7 +9,9 @@ ticks.
 The **AnimBase** object computes the current tick number when **AnimBase.nextFrame()** is called and before your animation's 
  **step()** method is called. The calculation is based on the **speed** parameter set for your animation.
 
-When checking animation timings using the Simulator it's a good idea to diasble videoCapture
+When checking animation timings using the Simulator it's a good idea to diasble videoCapture.
+
+Secondly, don't mix the two methods in one animation.
 
 ## Tick based control
  
