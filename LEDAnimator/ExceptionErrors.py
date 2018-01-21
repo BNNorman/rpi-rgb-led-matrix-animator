@@ -7,6 +7,10 @@ class Error(Exception):
    """Base class for other exceptions"""
    pass
 
+class NotSupported(Error):
+    """mode/type not supported"""
+    pass
+
 class MissingParameter(Error):
     """Raised when a required parameter is missing"""
     pass
@@ -86,4 +90,8 @@ class UnknownFontType(Error):
 
 class NoSuchMethod(Error):
     """ method requested is not supported in the helpwer/AntiAlias.py"""
+    pass
+
+class FileNotFound(Error):
+    """attempt to access a disc file that doesn't exists"""
     pass
