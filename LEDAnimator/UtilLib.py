@@ -16,6 +16,7 @@ import BDF
 #from BDF import Font as bdf
 from Constants import *
 import cv2
+import colorsys
 
 def alphaBlend(fg, bg):
     """
@@ -257,6 +258,11 @@ def nearest(n):
     :param float or numpy ndarray n: virtual pixel position (x or y)
     :return int: nearest integer (round up/down)
     """
+    assert type(n) is int or type(n) is float or type(n) is np.int32 or type(n) is np.float64,"nearest(n) n should be " \
+                                                                                             "a " \
+                                                                                      "number got "+str(
+        n)+"type="+str(
+        type(n))
     if type(n) is int:    n*=1.0 # make sure n is a float
     return int(round(n,0))
 
@@ -335,3 +341,47 @@ def addFolderToParentPath(folder):
 
     return os.path.join(parent,folder)
 
+def uint8(n):
+    """
+    convert a float from range 0->1.0 to 0->255 (int)
+    :param float n:
+    :return int: n m,apped to 0->255 range
+    """
+    return int(round(n*255, 0))
+
+def float8(n):
+    """
+    map n from 0->255 to 0->1.0 range
+    :param in n: range 0 to 255
+    :return float: n mapped to 0->1.0
+    """
+    # colorsys uses float values ranging 0.0->1.0
+    # this scales a LED value and returns a float
+    return n / 255.0
+
+def adjustTupleBrightnessAndAlpha(color=None,brightness=1.0,alpha=1.0):
+    """
+    Given a colour expressed as a tuple e.g (r,g,b,a) adjust the brightness and alpha
+
+    Mainly used where a colour is taken from a palette
+
+    :param tuple color: e.g. (r,g,b,a) in Pixel color order
+    :param float brightness: 0->1.0
+    :param float alpha: 0->1.0
+    :return:
+    """
+    assert color is not None,"Color cannot be None"
+    assert brightness >= 0 and brightness <= 1, "brightness must be in range 0->1.0"
+    assert alpha >= 0 and alpha <= 1, "alpha must be in range 0->1.0"
+
+    if brightness==1:
+        a, b, c, d = color
+        return (a,b,c,int(alpha*255))    # order doesn't matter if just adjusting alpha
+
+    # ok, brightness complicates matters
+    h,s,v=colorsys.rgb_to_hsv(color[RGB_R]/255.0,color[RGB_G]/255.0,color[RGB_B]/255.0)
+    v=v*brightness
+    r, g, b = colorsys.hsv_to_rgb(h, s, v)
+    color = (uint8(r), uint8(g), uint8(b), uint8(alpha))
+
+    return (color[RGB_R], color[RGB_G], color[RGB_B], color[ALPHA])
