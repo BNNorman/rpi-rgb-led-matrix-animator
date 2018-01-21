@@ -20,6 +20,7 @@ import os
 #blueAdjust=0.5
 
 # my panel adjustment
+# used in Panel.py when the frameBuffer is being sent to the RGBMatrix
 redAdjust=1.0
 greenAdjust=0.8
 blueAdjust=0.5
@@ -34,9 +35,7 @@ HSV_H=0
 HSV_S=1
 HSV_V=2
 
-# opencv reads images in BGRA order
-# oddly the Chain animations appear to work correctly
-# with normal order
+# you probably need to
 RGB_R=2
 RGB_G=1
 RGB_B=0
