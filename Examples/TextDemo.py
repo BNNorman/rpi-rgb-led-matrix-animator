@@ -26,6 +26,10 @@ from LEDAnimator.Text import *
 
 
 FPS=30 # frames per sec for the animation
+DEBUG=False
+
+if DEBUG:
+    sys.stdout=sys.stderr   # unbuffered debug messages
 
 # my panel is 64x64 made up of two panels stacked on top of each otherizontal
 PANEL_PARALLEL=2    # 2 in parallel = 64 leds v
@@ -36,7 +40,7 @@ PANEL_SERIES=2      # 2 in series = 64 leds horertical
 # The panel must be initialised first
 # params LEDspacing and LEDsize control the simulator window size
 Panel.init(rows=PANEL_ROWS, chain_len=PANEL_SERIES, parallel=PANEL_PARALLEL, fps=FPS,
-           debug=True,videoCapture=True,videoName="./TextDemo {width}x{height}.avi")
+           debug=DEBUG,videoCapture=False,videoName="./TextDemo.avi")
 
 
 # the animation sequence
@@ -69,7 +73,7 @@ cv2Seq= AnimSequence([
 ])
 
 # create the animator object
-A= Animator(debug=True,fps=FPS)
+A= Animator(debug=DEBUG,fps=FPS)
 # add the sequences the order is bottom layer to top layer
 A.addAnimation(seq=bdfSeq)  # bg images must be laid down first
 A.addAnimation(seq=cv2Seq)
