@@ -34,6 +34,10 @@ class Sparkle(ChainAnimBase):
             self.refreshCanvas()
             return
 
+        if self.init:
+            assert self.palette is not None,"No palette for Sparkle animation"
+            self.init=False
+
         for p in range(self.chain.getLength()):
             color=self.palette.getRandomEntry().getPixelColor()
             self.chain.setPixel(p,color)
@@ -47,14 +51,12 @@ class SparkleRandom(ChainAnimBase):
     """
     Same as SPARKLE but selects a random color - palette is ignored
     """
-
     def step(self):
         if self.isNotNextStep():
             self.refreshCanvas()
             return
 
         self.chain.setAllPixelsRandom()
-
         self.refreshCanvas()
 
 # COMET - a single comet heading left or right
@@ -103,15 +105,12 @@ class Comet(ChainAnimBase):
 
 # COMET-RIGHT
 class CometRight(Comet):
-    def __init__(self,**kwargs):
-        super(CometRight, self).__init__(**kwargs)
-        self.direction = 1
+    direction=1
 
 # COMET-LEFT
 class CometLeft(Comet):
-    def __init__(self,**kwargs):
-        super(CometLeft, self).__init__(**kwargs)
-        self.direction = -1
+    direction=-1
+
 
 # COMETS - repeating pattern of commets head to tail
 # length of tail is determined by number of entries in the palette
@@ -120,8 +119,8 @@ class Comets(ChainAnimBase):
     Comets is the same as comet but the chain is filled nose to tail
     """
     direction=1
-    multiColored=False # use first entry then next etc
-    tailLen=None        # use the palette length
+    multiColored=False  # use first entry then next etc
+    tailLen=None        # use the palette length if None
 
     def step(self):
         if self.isNotNextStep():
@@ -140,8 +139,12 @@ class Comets(ChainAnimBase):
                 if self.multiColored: c = self.getNextPaletteEntry()
                 # head of the comet is brightest
                 brightness = float(p % self.tailLen) / self.tailLen
+
+                # comets going left should get dimmer left to right
                 if self.direction<0: brightness=1.0-brightness
                 # comets become transparent as they fade
+                # human eye response is square law
+                brightness=brightness*brightness
                 self.chain.setPixel(p, c.getPixelColor(brightness=brightness,alpha=brightness))
 
             self.init=False
@@ -150,54 +153,50 @@ class Comets(ChainAnimBase):
         self.refreshCanvas()
 
 class CometsRight(Comets):
-    def __init__(self,**kwargs):
-        super(CometsRight, self).__init__(**kwargs)
-        self.direction=1
+    direction=1
 
 class CometsLeft(Comets):
-    def __init__(self,**kwargs):
-        super(CometsLeft, self).__init__(**kwargs)
-        self.direction=-1
+    direction=-1
+
 
 # PULSE - similar to fade in/out but no fading
 # uses a 25% duty cycle
 # each pulse uses the next color from the palette
 # cycling through
 class Pulse(ChainAnimBase):
+    """
+    Pulse the leds on and off with duty cycle
+
+    duty is a %
+
+    """
     # use a square wave duty cycle
     # to turn LEDS on or Off
 
+    # passed in
     duty=25
-    ledsOn=False
 
-    def reset(self,**kwargs):
-        super(Pulse,self).reset(**kwargs)
-        self.ledsOn = False  # leds currently off
+    #calculated
+    switchOverPoint=0
 
     def step(self):
         if self.isNotNextStep():
             self.refreshCanvas()
             return
 
-        # TODO could we use  if tick % fps*(100/duty)
-        # self.tick ranges 0 to (fps-1)
-        # turn the LEDS on for 25% of the time
-        #if self.tick < int(self.fps/(100.0/self.duty)):
-        #    Mark=True
-        #else:
-        #    Mark=False
-
-        Mark=True if (self.tick % self.fps*100/self.duty)==0 else False
-
-        # self.ledsOn saves us doing running the code when we don't
-        # need to
-        if Mark and not self.ledsOn:
+        if self.init:
             self.chain.setAllPixels(self.getNextPaletteEntry().getPixelColor())
-            self.ledsOn=True
-        elif not Mark and self.ledsOn:
-            self.chain.setAllPixels(Black.getPixelColor())
-            self.ledsOn=False
+            self.switchOverPoint=(self.duty/100.0)*self.speed*self.fps
+            self.init=False
 
+        # number of ticks per second = speed*fps
+        # ON cycle at 25% duty would be upto duty*speed*fps
+
+        brightness=1.0 if self.tick>0 and self.tick<self.switchOverPoint else 0
+
+        # this does not take effect till the chain is rendered
+        # so it doesn't take a long time
+        self.chain.setChainBrightness(brightness)
         self.refreshCanvas()
 
 # ALT-ON-OFF
@@ -260,10 +259,12 @@ class On(ChainAnimBase):
 class Fade(ChainAnimBase):
     """
     Fade is the base class for FadeIn,FadeOut and FadeInOut
+
+    Fade takes place over duration time
     """
 
-    direction=1 # fade in by default
-    brightness=0       # current brightnessinance
+    direction=1     # fade in by default
+    brightness=0    # current brightness
     c=None
 
     def step(self):
@@ -272,47 +273,54 @@ class Fade(ChainAnimBase):
             return
 
         if self.init:
-            self.c=self.getNextPaletteEntry().getPixelColor()
+            self.c=self.getNextPaletteEntry().getPixelColor() # full brightness
             self.chain.setAllPixels(self.c)
             self.brightness=0.0 if self.direction>0 else 1.0
+            self.rate=0.1
+            self.totalTicks=self.fps*self.duration
             self.init=False
         else:
-            '''
-            self.tick is the current tick within a 1 second window
-            there will be fps ticks per second so fps*duration ticks in all
-            '''
-            self.brightness=float(self.tick)/(self.fps)
+            # we want the brightness to go from zero to 1.0 in duration seconds
+            self.brightness=(time.time()-self.startTime)/self.duration
             if self.direction>0:
-                if self.brightness>=1.0: self.brightness=1.0
+                if self.brightness>=1.0:
+                    self.animationHasFinished()
+                    self.brightness=1.0
             elif self.direction<0:
                 self.brightness=1.0-self.brightness
-                if self.brightness<=0:   self.brightness=0
+                if self.brightness<=0:
+                    self.animationHasFinished()
+                    self.brightness=0
 
+        print "Setting chain brightness to",self.brightness
         self.chain.setChainBrightness(self.brightness)
         self.refreshCanvas()
 
 class FadeIn(Fade):
-
     direction=1
 
 class FadeOut(Fade):
     direction = -1
-
 
 # FADE-IN-OUT
 class FadeInOut(Fade):
 
     direction=1 # initial is to fade in
 
+    def __init__(self,**kwargs):
+        super(FadeInOut, self).__init__(**kwargs)
+        self.reset()
+
     def reset(self,**kwargs):
         super(FadeInOut,self).reset(**kwargs)
-        # initialise the brightness and direction at reset
         self.brightness = 0
         self.direction=True # True=fade in, False=Fadeout
+        self.init=True
 
     def step(self):
         super(FadeInOut,self).step()
 
+        # we change the direction of fading here
         if self.brightness==0 and self.direction<0:
             self.direction=1
             self.init=True
@@ -320,28 +328,30 @@ class FadeInOut(Fade):
             self.direction=-1
             self.init=True
 
-        # super refreshes the canvas
-
-
 
 # WAIT - does nothing but wait
 class Wait(ChainAnimBase):
-
     def step(self):
         self.refreshCanvas()
 
 # Larson scanner - same as Knight Rider car (ish)
 class Larson(ChainAnimBase):
     """
-    Larson scanner as seen on the front of the car Kit in Knight Rider
+    Larson scanner (as seen on Kinght Rider and Battlestar Galactica
 
-    Cycles through the supplied palette.
+    The default size is half the chain.
+
+    Beware, lasronSize must divide wholly into the chain length so try to use
+    even length chains
     """
-
     # user parameters
-    larsonSize=2                # half the chain length
-    larsonLen=0
-    larsonBackground=(0,0,0,0)  # transparent black
+    larsonSize=2                # default half the chain length
+    larsonBackground=None
+
+    # internal
+    larsonLen=0                 # calculated
+    maxPosition=larsonLen    # calculated
+
 
     def step(self):
         if self.isNotNextStep():
@@ -353,48 +363,55 @@ class Larson(ChainAnimBase):
             c = self.getNextPaletteEntry()
             self.chainLen=self.chain.getLength()
             self.larsonLen=int(self.chainLen/self.larsonSize)
-            # TODO not really needed??
-            self.chain.setAllPixels(Black.getPixelColor(alpha=0)) # transparent background
+            self.maxPosition=self.chainLen-self.larsonLen
+            self.chain.setChainBrightness(1)
+            if self.larsonBackground is not None:
+                self.chain.setAllPixels(self.larsonBackground)
+            else:
+                self.chain.setAllPixels(Black.getPixelColor(alpha=0)) # transparent background
 
+            # construct the shape on the left
             for p in range(self.larsonLen/2+1):
                 #
                 brightness=2*float(p)/self.larsonLen
-                # print("Larson brightness p=",p,"brightness=",brightness)
-                # as the brightness drops the opacity also drops
+                # human eye is nearly a square law
+                # we set alpha as well so that the shape fades right out
+                brightness=brightness*brightness
                 color=c.getPixelColor(brightness=brightness,alpha=brightness)
                 self.chain.setPixel(p,color)
                 self.chain.setPixel(self.larsonLen-p, color)
             self.refreshCanvas()
             self.position=0
-            self.direction=True # move right
+            self.direction=True # move right initially
             self.init=False
             return
 
         else:
-            if self.direction and self.position<(self.chainLen-self.larsonLen):
-                self.chain.shiftRight(fill=None)
-                self.position=self.position + 1
-            elif self.direction and self.position>=(self.chainLen-self.larsonLen):
-                self.chain.shiftLeft(fill=None)
-                self.position = self.position - 1
-                self.direction=False
-            elif not self.direction and self.position==0:
-                self.chain.shiftRight(fill=None)
-                self.position = self.position + 1
-                self.direction=True
-            elif not self.direction and self.position>0:
-                self.chain.shiftLeft(fill=None)
-                self.position = self.position - 1
+            if self.direction:
+                # moving right
+                if self.position<self.maxPosition:
+                    self.chain.roll(1)
+                    self.position=self.position + 1
+                else: #self.position>=self.maxPosition:
+                    self.chain.roll(-1) # reverse
+                    self.position = self.position - 1
+                    self.direction=False
+            else:
+                # moving left
+                if self.position==0:
+                    self.chain.roll(1)  # reverse
+                    self.position = self.position + 1
+                    self.direction=True
+                else:# self.position>0:
+                    self.chain.roll(-1)
+                    self.position = self.position - 1
 
         self.refreshCanvas()
 
+
 class KnightRider(Larson):
-    """
-    Alternative name for Larson and maybe easier to remember
-    """
-
-    pass
-
+    def __init__(self,**kwargs):
+        super(KnightRider,self).__init__(**kwargs)
 
 # COLLIDER - comets come in from both ends
 # and smash in the middle
@@ -405,16 +422,16 @@ class Collider(ChainAnimBase):
     tailLen=5
 
     def step(self):
+
         if self.isNotNextStep():
             self.refreshCanvas()
-            return
+            #return
 
         if self.init:
-            self.fading = False
             self.chainPos = 0
-            self.collided = False
-
+            self.collided=False
             self.brightness=1.0
+            self.fading=False
             self.chain.setAllPixels(Black.getPixelColor(alpha=0))  # all transparent
             self.chain.setChainBrightness(1.0)
             self.chain.setChainAlpha(1.0)       # must start visible for colliding comets
@@ -439,6 +456,8 @@ class Collider(ChainAnimBase):
             self.init = False
             return
 
+        if self.debug: print self.id, "ChainAnimations.Collider() step() running"
+
         if self.collided:
             if self.fading:
                 if self.brightness<=0:
@@ -460,7 +479,8 @@ class Collider(ChainAnimBase):
                 # white flash
                 self.collided=True
             else:
-                if self.collided: return
+                if self.collided:
+                    return
                 self.chain.shiftIn(fill=None)
                 self.chainPos += 1
 
@@ -515,14 +535,6 @@ class WipeOut(ChainAnimBase):
     """
     c=None # current color being used for fill
 
-    def __init__(self, **kwargs):
-        super(WipeOut, self).__init__( **kwargs)
-        self.reset()
-
-    def reset(self,**kwargs):
-        super(WipeOut, self).reset(**kwargs)
-        self.init = True
-
     def step(self, chain=None):
         if self.isNotNextStep():
             self.refreshCanvas()
@@ -550,6 +562,7 @@ class WipeOut(ChainAnimBase):
 
         self.refreshCanvas()
 
+
 class Wipe(ChainAnimBase):
     """
     Wipe is the base class for WipeLeft and WipeRight
@@ -561,6 +574,7 @@ class Wipe(ChainAnimBase):
     direction=True  # default is wipe right
     chainLen=0
     multiColored=False
+
 
     def step(self):
         if self.isNotNextStep():
@@ -596,11 +610,8 @@ class Wipe(ChainAnimBase):
         self.refreshCanvas()
 
 class WipeRight(Wipe):
-
-    direction=True
-
+    direction = True
 
 class WipeLeft(Wipe):
-
-    self.direction = False
+    direction = False
 
