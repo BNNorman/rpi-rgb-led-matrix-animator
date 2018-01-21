@@ -21,6 +21,7 @@ class Animator(object):
     #debugging
     debug=False
     id="[No id]"
+    warned=False
 
     def __init__(self, **kwargs):
 
@@ -66,6 +67,8 @@ class Animator(object):
 
         avg_frametime=0
 
+        warned=False
+
         while True:
 
             # simulator window may have been closed
@@ -102,7 +105,7 @@ class Animator(object):
             loopTime=time.clock() - t0
 
             # check if
-            if (loopTime>frameInterval) and not self.debug:
+            if (loopTime>frameInterval) and not self.warned:
                 print "Animator.run() Animation frame interval exceeded - check animation durations. " \
                                      "Total loopTime=",loopTime,"frameInterval=",frameInterval
 
