@@ -2,16 +2,18 @@
 
 This program supports a number of types (sub-classes) of animations:-
 
-1. Chain Animations (ChainAnimations.py)
+1. Chain Animations, (ChainAnimations.py)
 2. Text Animations (TextAnimations.py)
 3. Image Animations (ImageAnimations.py)
 4. PanelAnimations (PanelAnimations.py) 
 
 They each work in basically the same way but are grouped for convenience. Panel animations are just a collection of 
-visually pleasing graphics - the Panel is treated a bit like a drawing board - draw what you like on it.
-
+visually pleasing graphics - the Panel is treated a bit like a drawing board - draw what you like on it (Lines,
+Rectangles,Circles and Ovals).
 
 You can add your own animation sub-classes if you want/need to.
+
+Read the document [Speed Control](SpeedControl.md)
 
 ## Creating an animation
 
@@ -54,6 +56,7 @@ finished set **self.init=False** otherwise you'll get false **reset()** calls be
 would mean your animation doesn't progress.
 
 Look at the examples to see how I wrote the animations (I'm sure they could be optimised).
+
 
 ## Animation sub-classes
 All animation types inherit from the AnimBase object which processes the parameters passed in for the animation. The sub-classes are, currently, ChainAnimBase, TextAnimBase and ImageAnimBase. These provide an opportunity to do something which is only related to the individual animation subclasses. At some stage you might want to add other types of animation sub-classes.  
