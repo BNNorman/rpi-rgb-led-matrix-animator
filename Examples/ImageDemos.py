@@ -27,6 +27,10 @@ from LEDAnimator.AnimSequence import *
 from LEDAnimator.Image import *
 
 FPS=100 # frames per sec for the animation
+DEBUG=False
+
+if DEBUG:
+    sys.stdout=sys.stderr   # unbuffered debugging
 
 # my panel is 64x64 made up of two panels stacked on top of each otherizontal
 PANEL_PARALLEL=2    # 2 in parallel = 64 leds v
@@ -38,10 +42,10 @@ PANEL_SERIES=2      # 2 in series = 64 leds horizontal
 # The panel must be initialised first as it provides width and height info for the animations
 # LEDSpacing and LEDSize determine the on-screen size of the simulator window (if used)
 Panel.init(rows=PANEL_ROWS, chain_len=PANEL_SERIES, parallel=PANEL_PARALLEL, fps=FPS,
-           debug=False, videoCapture=True, videoName="./ImageDemo {width}x{height}.avi")
+           debug=DEBUG, videoCapture=True, videoName="./ImageDemo.avi")
 
 # Images used - not loaded till required
-tulip=Image(imagePath="../Images/tulips.jpg",scaleMode="H",alignMode=("C","C"),debug=True)
+tulip=Image(imagePath="../Images/tulips.jpg",scaleMode="H",alignMode=("C","C"))
 theMatrix=Image(imagePath="../Images/TheMatrix.jpg",scaleMode="F",alignMode=("C","C"))
 daf4=Image(imagePath="../Images/DAF4.jpg",scaleMode="F",alignMode=("C","C"))
 daf640=Image(imagePath="../Images/DAF_640_640.png",scaleMode="F",alignMode=("C","C"),loadVisible=False)
@@ -86,14 +90,9 @@ SEQ1= AnimSequence([
 
 ])
 
-SEQ1off=AnimSequence([
-    ImageAnimations.BlurIn(duration=10, blurStep=0.05, speed=1.0, fps=FPS, fgImage=scania),
-])
-
-
 
 # create the animator object
-A= Animator(debug=True,fps=FPS)
+A= Animator(debug=DEBUG,fps=FPS)
 # add the sequences the order is bottom layer to top layer
 A.addAnimation(seq=SEQ1)  # bg images must be laid down first
 
