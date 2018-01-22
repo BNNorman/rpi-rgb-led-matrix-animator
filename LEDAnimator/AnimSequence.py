@@ -8,6 +8,9 @@ animation in the sequence
 
 class AnimSequence():
 
+    debug=False     # can be passed in for debugging
+    id='[no id]'    # can be passed in to label error messages
+
     def __init__(self,animList):
         # animList contains a list of function pointers
         self.animList=[]
