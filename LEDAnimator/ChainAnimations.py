@@ -264,7 +264,7 @@ class Fade(ChainAnimBase):
     """
 
     direction=1     # fade in by default
-    brightness=0    # current brightness
+    alpha=0         # current transparency
     c=None
 
     def step(self):
@@ -273,27 +273,26 @@ class Fade(ChainAnimBase):
             return
 
         if self.init:
-            self.c=self.getNextPaletteEntry().getPixelColor() # full brightness
+            self.c=self.getNextPaletteEntry().getPixelColor()
             self.chain.setAllPixels(self.c)
-            self.brightness=0.0 if self.direction>0 else 1.0
+            self.alpha=0.0 if self.direction > 0 else 1.0
             self.rate=0.1
             self.totalTicks=self.fps*self.duration
             self.init=False
         else:
             # we want the brightness to go from zero to 1.0 in duration seconds
-            self.brightness=(time.time()-self.startTime)/self.duration
+            self.alpha= (time.time() - self.startTime) / self.duration
             if self.direction>0:
-                if self.brightness>=1.0:
+                if self.alpha>=1.0:
                     self.animationHasFinished()
-                    self.brightness=1.0
+                    self.alpha=1.0
             elif self.direction<0:
-                self.brightness=1.0-self.brightness
-                if self.brightness<=0:
+                self.alpha= 1.0 - self.alpha
+                if self.alpha<=0:
                     self.animationHasFinished()
-                    self.brightness=0
+                    self.alpha=0
 
-        print "Setting chain brightness to",self.brightness
-        self.chain.setChainBrightness(self.brightness)
+        self.chain.setChainBrightness(self.alpha)
         self.refreshCanvas()
 
 class FadeIn(Fade):
@@ -304,7 +303,9 @@ class FadeOut(Fade):
 
 # FADE-IN-OUT
 class FadeInOut(Fade):
-
+    """
+    Fade in-out does what it says on the tin by reversing the fade from in to out
+    """
     direction=1 # initial is to fade in
 
     def __init__(self,**kwargs):
@@ -313,7 +314,7 @@ class FadeInOut(Fade):
 
     def reset(self,**kwargs):
         super(FadeInOut,self).reset(**kwargs)
-        self.brightness = 0
+        self.alpha = 0
         self.direction=True # True=fade in, False=Fadeout
         self.init=True
 
@@ -321,10 +322,10 @@ class FadeInOut(Fade):
         super(FadeInOut,self).step()
 
         # we change the direction of fading here
-        if self.brightness==0 and self.direction<0:
+        if self.alpha==0 and self.direction<0:
             self.direction=1
             self.init=True
-        if self.brightness>=1.0 and self.direction>0:
+        if self.alpha>=1.0 and self.direction>0:
             self.direction=-1
             self.init=True
 
