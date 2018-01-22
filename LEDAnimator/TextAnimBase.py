@@ -47,9 +47,9 @@ class TextAnimBase(AnimBase):
     font=None                       # font object
     palette=None                    # ignored if fgColor is not None
     fgColor=None                    # text character rendering colour
-    bgColor=None                    # transparent background
-    brightness=1.0                  # multiplier for fading effects
-    zoom=None                       # would be (startPtSize,endPtSize)
+    bgColor=None                    # transparent background, for now
+    textAlpha=1.0                   # for fading effects
+    zoom=None                       # Future: would be (startSize,endSize)
     textBuffer=None                 # for rendering text before sending to panel
 
 
@@ -65,6 +65,8 @@ class TextAnimBase(AnimBase):
 
         self.font=Font.Font(self.text.getFontFace(),self.text.getFontSize())
 
+        # This needs changing to use self.text.Xpos etc at some point
+        self.origin=(self.Xpos,self.Ypos)
 
         # buffer size needs to be adjusted if HERSHEY because openCV seems to
         #lose the first two horizontal pixels (left and right) and 2 vertical (top and bottom)
@@ -114,7 +116,6 @@ class TextAnimBase(AnimBase):
             return None
         elif isinstance(color,Palette):
             c=color.getNextEntry().getPixelColor()
-            print "c",c
             return c
         elif isinstance(color,Color):
             return color.getPixelColor()
@@ -134,13 +135,9 @@ class TextAnimBase(AnimBase):
         :return Nothing: the text buffer is filled
         """
 
-        print "TextAnimBase.setBgColor()"
-
         color=self.getBgColor()
         if color is None:
             return
-
-        print "TextAnimBase.setBgColor() color=",color
 
         # fill the buffer
         self.textBuffer[:,:]=[color]
@@ -165,7 +162,6 @@ class TextAnimBase(AnimBase):
         :return Nothing: The text is drawn using either BDF fonts (if bdfFontID is not None) or openCV fonts
         """
 
-        #TODO decide if brightness and alpha can be used
         if self.text.getText() is None: return    # nothing to do
 
         ascent,descent= self.font.getFontMetrics()
@@ -211,5 +207,13 @@ class TextAnimBase(AnimBase):
         if self.bottomLeftOrigin:
             h,w=self.textBuffer.shape[:2]
             y=y-h
+
+        # set alpha textAlpha is in range 0->1.0
+        # no point biothering if alpha is zero
+        if self.textAlpha>0:
+            self.textBuffer[...,ALPHA]=int(self.textAlpha*255)
+        else:
+            print "TextAnimBase.refreshCanvas() textAlpha is zero"
+
 
         Panel.DrawImage(x, y, self.textBuffer)
