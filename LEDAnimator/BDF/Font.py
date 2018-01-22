@@ -136,7 +136,7 @@ class Font():
         w = int(w)
         h = int(h)
 
-        # create the image of the character using black background
+        # create the image of the character using black transparent background
         # and add an Alpha channel
         im=np.zeros((h,w,4),np.uint8)
 
@@ -181,7 +181,7 @@ class Font():
         If the Palette contains R,G,B in that order the first character will be rendered in red, the second green
         third blue, fourth red ... etc
 
-        :param numpy ndarray image: image on which to render
+        :param numpy ndarray image: image on which to render (textBuffer)
         :param int x: x pos
         :param int y: y pos
         :param str text: text string
@@ -190,8 +190,6 @@ class Font():
         """
 
         for ch in text:
-
-
 
             char=self.getChar(ch)
 
@@ -205,35 +203,29 @@ class Font():
 
         return x
 
-    def _ColorGlyph(self, glyph, fgColor=None, bgColor=None):
+    def _ColorGlyph(self, glyph, fgColor=None):
         """
 
         The glyph must be a numpy array with the glyph in white and the background in black (transparent)
 
         The colors include alpha which sets the character transparency. However, if the foreground is None it is made
-        fully transparent. Similarly, if the background is None it is left fully tansparent. Caller may
-        put a background on the image we are rendering to
+        fully transparent. Similarly, if the background is None it is left fully tansparent.
+
+        Background color is added to the textBuffer first.
+
 
         :param numpy ndarray instance glyph: the black and white character
-        :param fgColor: None or (r,g,b,a) in Pixel order
-        :param bgColor: None or (r,g,b,a)
+        :param fgColor: (r,g,b,a) in Pixel order
         :return numpy ndarray: colored glyph
         """
 
+        assert fgColor is not None,"fgColor cannot be None - transparency is done with Alpha"
 
         # define color order for masks
-        red, green, blue = glyph[:, :, RGB_R], glyph[:, :, RGB_G], glyph[:, :, RGB_B]
-        foreground_mask = (red == 255) & (green == 255) & (blue == 255)
-        background_mask = (red == 0) & (green == 0) & (blue == 0)
+        alpha=glyph[:,:,ALPHA]
+        foreground_mask = (alpha == 255)
 
         if fgColor is not None:
             glyph[:, :][foreground_mask] = fgColor
-        else:
-            glyph[:, :, ALPHA][foreground_mask] = 0
-
-        if bgColor is not None:
-            glyph[:, :][background_mask] = bgColor
-        else:
-            glyph[:, :, ALPHA][background_mask] = 0
 
         return glyph
