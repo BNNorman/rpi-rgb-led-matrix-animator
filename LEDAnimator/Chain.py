@@ -98,8 +98,10 @@ class Chain():
     def adjustPixel(self,pixelData):
         """
         correct the pixel brightness based on chain brightness and anti-alias factor
+
+        Used when getting the pixel color
         :param tuple pixelData: (h,s,v,a,aa)
-        :return:
+        :return tuple: h,s,v,a adjusted for chain brightness and chain alpha
         """
         h, s, v, a, aa=pixelData
         # anti alias (aa) affects V
@@ -188,7 +190,7 @@ class Chain():
         """
         self.hsv[n,ALPHA] = alpha
 
-    def setPixel(self,n,color,alpha=1.0):
+    def setPixel(self,n,color):
         """
         sets the rgba values of a pixel at index n
         Throws a value error if n is not in the range 0->length of the chain
@@ -200,10 +202,14 @@ class Chain():
         if n<0 or n>=self.lenChain:
             raise ValueError("chain.setPixel(n,color,alpha) n ("+str(n)+") is out of range 0 to "+ str(self.lenChain-1))
 
-        h,s,v=colorsys.rgb_to_hsv(color[RGB_R]/255.0,color[RGB_G]/255.0,color[RGB_B]/255.0)
+        if color is None:
+            h,s,v,a=0,0,0,0
+        else:
+            a=color[ALPHA]/255.0
+            h,s,v=colorsys.rgb_to_hsv(color[RGB_R]/255.0,color[RGB_G]/255.0,color[RGB_B]/255.0)
 
         # only affect channels upto but not including AntiAlias factor
-        self.hsv[n,:ALIAS]=[h,s,v,color[ALPHA]/255.0]
+        self.hsv[n,:ALIAS]=[h,s,v,a]
 
 
     def getPixelXY(self,n):
