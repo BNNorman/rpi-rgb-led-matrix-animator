@@ -1,38 +1,26 @@
-'''
+"""
 TextAnimations.py
 
-a list of possible text animations
 
+"""
 
-TODO convert to openCV fonts only
-'''
 
 from TextAnimBase import TextAnimBase
 import time
 import Panel
 import cv2
+from Palette import *
+from Colors import Color
+from ExceptionErrors import *
+from UtilLib import *
 
 # ON
 class On(TextAnimBase):
     """
-    On simply displays the text message until the duration expires
+    On simply displays the given text message until the duration expires
     """
-    def __init__(self, **kwargs):
-        super(On, self).__init__(**kwargs)
-        self.reset()
-
-    def reset(self,**kwargs):
-        super(On,self).reset(**kwargs)
-
     def step(self):
-        if self.isNotNextStep():
-            self.refreshCanvas()
-            return
-
-        if self.init:
-            self.drawText()
-            self.init=False
-
+        self.drawText()
         self.refreshCanvas()
 
 # FADE
@@ -43,46 +31,49 @@ class Fade(TextAnimBase):
     If multiColored is True then each character uses the colors from the palette
 
     """
-    direction=1    # fade in, -1=fade out
-    alpha=1.0      # current transparency
-
-    def __init__(self, **kwargs):
-        super(Fade, self).__init__(**kwargs)
-        self.reset()
+    direction=1         # fade in, -1=fade out
+    visibility=1.0      # current transparency
+    multiColored=False  # not supported with fade in ( well, not yet anyway)
+    curFgColor=None       # temp
 
     def reset(self,**kwargs):
-        super(Fade, self).reset(**kwargs)
+        super(Fade,self).reset()
 
-    def step(self, chain=None):
+        # necessary to prevent invisible textBuffer showing up before step() is called
+        self.textAlpha = 0.0 if self.direction == 1 else 1.0
+
+    def step(self):
 
         if self.isNotNextStep():
-            # don't bother if init hasn't been done
-            if not self.init:
-                self.drawText(alpha=self.alpha)
-                self.refreshCanvas()
+            self.refreshCanvas()
             return
 
         if self.init:
-            self.fgColor=self.palette if self.multiColored else self.palette.getNextEntry().getPixelColor()
-            self.c = self.getNextPaletteEntry()
-            self.alpha=0.0 if self.direction==1 else 1.0
+            self.FgColor=self.getFgColor()
+            self.textAlpha=0.0 if self.direction == 1 else 1.0
+            self.origin=(self.Xpos,self.Ypos)
+            self.drawText()
+            self.refreshCanvas()
             self.init=False
 
-        # fadeInOut needs to know brightness
-        self.alpha = float(self.tick) / (self.fps)
+        # work out visibility - time based. We want to fade in starting from the end of a startPause
+        # upto the start of the endPause
+        # So, goes from zero to hero in duration-startPause-endPause seconds
+        self.textAlpha = (time.time()-self.startTime)/(self.duration-self.startPause-self.endPause)
 
-        # make the brightness increase
+        # make the transparency decrease
         if self.direction==1:
-            if self.alpha > 1.0: self.alpha=1.0   # can't increase beyond full on
-        # or make the brightness decrease
+            if self.textAlpha > 1.0:
+                self.textAlpha=1.0   # can't increase beyond full on
+                self.animationHasFinished()
+        # or make the transparency increase
         else:
-            self.alpha = 1.0 - self.alpha
-            if self.alpha < 0.0:  self.alpha=0.0  # can't decrease below full off
+            self.textAlpha = 1.0 - self.textAlpha
+            if self.textAlpha < 0.0:
+                self.animationHasFinished()
+                self.textAlpha=0.0  # can't decrease below full off
 
-        # is the text plain or multi-colored?
-        # color selection based on bdfFontID and multicolored flags
-
-        self.drawText(alpha=self.alpha)
+        self.origin=(self.Xpos,self.Ypos)
         self.refreshCanvas()
 
 #FADE-IN
@@ -90,27 +81,14 @@ class FadeIn(Fade):
     """
     sub class of Fade
     """
-
-    def __init__(self,**kwargs):
-        super(FadeIn,self).__init__(**kwargs)
-        self.direction=1
-        self.reset()
-
-    def reset(self,**kwargs):
-        super(Fade,self).reset(**kwargs)
+    direction=1
 
 # FADE-0UT
 class FadeOut(Fade):
     """
     sub class of Fade
     """
-    def __init__(self,**kwargs):
-        super(FadeOut, self).__init__(**kwargs)
-        self.direction=-1
-        self.reset()
-
-    def reset(self):
-        super(FadeOut,self).reset()
+    direction=-1
 
 class Move(TextAnimBase):
     """
@@ -126,15 +104,10 @@ class Move(TextAnimBase):
     origin=startPos     # used by drawText
     xScroll = 0         # not moving - number of steps to move (+/-)
     yScroll = 0         # not moving
-    yLimit=Panel.height # recalculated base on the text size
+    yLimit=Panel.height # recalculated based on the text size
     xLimit=Panel.width
-    multiColored=False
+    multiColored=False  # now in the text object
 
-
-
-    def reset(self,**kwargs):
-        super(Move,self).reset(**kwargs)
-        self.origin=self.startPos
 
     def step(self):
         if self.isNotNextStep():
@@ -142,11 +115,10 @@ class Move(TextAnimBase):
             return
 
         if self.init:
+            self.fgColor=self.getFgColor()
+            self.origin = self.startPos
+            self.multiColored=self.text.getMultiColored()
             self.drawText()
-
-            # work out the limits
-            self.yLimit=0 # keep the compiler happy
-            self.xLimit=0
 
             # initial drawing position
             self.Xpos,self.Ypos=self.startPos
@@ -159,8 +131,6 @@ class Move(TextAnimBase):
             self.xScroll=(xEnd-xStart)*self.speed/self.fps
             self.yScroll=(yEnd-yStart)*self.speed/self.fps
 
-            #self.drawText()
-            #self.refreshCanvas()
             self.init = False
 
         # move the text drawing point
@@ -179,18 +149,13 @@ class Move(TextAnimBase):
             if self.Xpos<=xEnd: self.init=True
 
         self.origin=(self.Xpos,self.Ypos)   # origin is used by drawText
-        self.drawText()
+        #self.drawText()
+        print "TextAnimations.Move origin=",self.origin
         self.refreshCanvas()
 
 class Wait(TextAnimBase):
     """
     wait does nothing except refresh the canvas for the duration
     """
-    def _init__(self,**kwargs):
-        super(Wait, self).__init__(**kwargs)
-
-    def reset(self,**kwargs):
-        super(Wait, self).reset(**kwargs)
-
     def step(self):
         self.refreshCanvas()
