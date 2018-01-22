@@ -257,7 +257,7 @@ def nearest(n):
     :param a number or array of numbers: virtual pixel position (x or y)
     :return int: nearest integer (round up/down)
     """
-
+    if type(n) is None: return
     n=float(n) # make sure n is a float
     return int(round(n,0))
 
@@ -274,7 +274,6 @@ def pasteOpaqueAt( bg, x, y, im):
     if h * w == 0: return  # zero sized image - ignore it
     x, y = nearest(x), nearest(y)
 
-    #TODO, does this affect bg without needing to return anything
     bg[y:y + h, x:x + w, :3] = im[:, :, :3]
     return bg
 
