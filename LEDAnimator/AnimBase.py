@@ -24,8 +24,6 @@ class AnimBase(object):
         selection of next color from a palette
     """
 
-    classname = "AnimBase"
-
     # default variables
     startTime=time.time()   # reset by reset()
     curPalEntry=0
@@ -44,6 +42,7 @@ class AnimBase(object):
 
     animLoops=False         # play once and stop - animation must check it, true enables repetition before duration expires
     debug = False
+    id=["No id]"]
 
     # calculated
     tick=0                  # current tick number (see docs
@@ -89,6 +88,8 @@ class AnimBase(object):
         # ALL outputs for this layer are sent to this buffer before sending to Panel
         self.layerBuffer=NumpyImage.NumpyImage(width=Panel.width, height=Panel.height, alpha=0)
 
+
+
     def animationClass(self):
         """
         convenience function to save typing
@@ -96,22 +97,22 @@ class AnimBase(object):
         """
         return self.__class__.__name__
 
-    def _Debug(self,msg):
+    def _Debug(self,*args):
         """
         Simple debug message formatter
         :param msg:
         :return:
         """
         if not self.debug: return
-        self._Warning(msg)
+        self._Warning(*args)
 
-    def _Warning(self,msg):
+    def _Warning(self,*args):
         """
         Issue a warning message - ignores self.debug
         :param str msg:
         :return None:
         """
-        print self.id, msg, "Animation=", self.__class__.__name__
+        print self.id ," ".join(map(str, args)), "Animation=", self.__class__.__name__
 
 
     def loadImage(self,which):
@@ -312,14 +313,15 @@ class AnimBase(object):
         :param wanted:
         :return:nothing speed is set
         """
-        assert wanted is not None, self.classname + " ERROR: wanted speed not set by " + self.animationClass()
+        assert wanted is not None, "Animbase.setSpeed() wanted speed not set by " + self.animationClass()
         assert type(wanted) is float or type(wanted) is int,self.classname+"ERROR wanted should be a float or int"
-        assert self.fps is not None, self.classname + " ERROR: fps not set by " + self.animationClass()
+        assert self.fps is not None, "Animbase.setSpeed() fps not set by " + self.animationClass()
 
         # if speed is less than FPS the animations will stall
         if float(wanted) <= (1.0 / self.fps):
             self.speed = 1.1 / self.fps  # fudge to stop animations stalling
-            print self.classname + " Animation speed", wanted, "increased to", self.speed,"to prevent animation stalling for", self.animationClass()
+            print "AnimBase.setSpeed() wanted speed", wanted, "increased to", self.speed,"to prevent animation " \
+                                                                                        "stalling for", self.animationClass()
         else:
             self.speed = wanted
 
@@ -392,7 +394,7 @@ class AnimBase(object):
         :return: Nothing
         :raises InvalidMode if scaleMode is not "H","V", or "F"
         """
-        assert type(scaleMode) is str, self.classname + ".scaleImage() scaleMode character should be a string."
+        assert type(scaleMode) is str, "AnimBase.scaleImage() scaleMode character should be a string."
         if scaleMode is None: return
 
         mode=scaleMode[:1].upper()
@@ -402,7 +404,7 @@ class AnimBase(object):
         elif mode=="F":
             img.resizeFitToTarget(Panel.width,Panel.height)
         else:
-            raise InvalidMode("Image scale mode should be V(ertical),H(orizontal) or F(it)")
+            raise InvalidMode("AnimBase.setScale(). Image scale mode should be V(ertical),H(orizontal) or F(it)")
 
     def refreshCanvas(self):
         """
