@@ -209,11 +209,10 @@ class TextAnimBase(AnimBase):
             y=y-h
 
         # set alpha textAlpha is in range 0->1.0
-        # no point biothering if alpha is zero
+        # no point bothering if alpha is zero
         if self.textAlpha>0:
             self.textBuffer[...,ALPHA]=int(self.textAlpha*255)
-        else:
-            print "TextAnimBase.refreshCanvas() textAlpha is zero"
+            Panel.DrawImage(x, y, self.textBuffer)
 
 
-        Panel.DrawImage(x, y, self.textBuffer)
+
