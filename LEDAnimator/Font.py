@@ -33,7 +33,6 @@ class Font():
 
         if type(fontFace) is str:
             assert fontFace.upper()=="BDF","Expected 'BDF' for font face"
-            print "Creating BDF font"
             self.font = bdf.Font(fontSize)
         else:
             self.font = OpenCV.Font(self.fontSize,fontFace)
