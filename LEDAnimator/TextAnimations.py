@@ -40,10 +40,9 @@ class Fade(TextAnimBase):
         super(Fade,self).reset()
 
         # necessary to prevent invisible textBuffer showing up before step() is called
-        self.textAlpha = 0.0 if self.direction == 1 else 1.0
+        self.textAlpha = 0.0
 
     def step(self):
-
         if self.isNotNextStep():
             self.refreshCanvas()
             return
@@ -149,8 +148,6 @@ class Move(TextAnimBase):
             if self.Xpos<=xEnd: self.init=True
 
         self.origin=(self.Xpos,self.Ypos)   # origin is used by drawText
-        #self.drawText()
-        print "TextAnimations.Move origin=",self.origin
         self.refreshCanvas()
 
 class Wait(TextAnimBase):
