@@ -4,7 +4,7 @@ Chain.py
 A chain is a sequence of XY coordinates representing the position of LEDs in a string which can form any shape.
 It is akin to a LED strip and animated in a similar fashion.
 
-Each pixel is stored as a colour using the hsv colourspace (HSVA) plus an alpha component.
+Each pixel is stored as a color using the hsv colorspace (HSVA) plus an alpha component.
 
 The utilities Chain Maker and Text Chain Maker provide a means to create chains to ustilise in this program.
 
@@ -48,7 +48,7 @@ class Chain():
     you can use the built in functions to create geometric shapes or the utilities
     to create chains from SVG images or text strings
 
-    XY coords are kept separate from the pixel data so that it is possible to shift the pixel colours
+    XY coords are kept separate from the pixel data so that it is possible to shift the pixel colors
     without affecting the coordinates
 
     """
@@ -127,7 +127,7 @@ class Chain():
 
     def getNextLED(self,wrap=False):
         """
-        returns the X/Y coordinates and colour of the pixel at the current position (CurPos)
+        returns the X/Y coordinates and color of the pixel at the current position (CurPos)
 
         :param boolean wrap: if True getNextLed will wrap back to the start
         :return int x, int y, tuple (r,g,b,a): (x,y,(r,g,b,a))
@@ -147,7 +147,7 @@ class Chain():
         """
         Sets the overall chain brightness.
         Allows the chain to be dimmed/brightened without affecting the relative
-        brightness of the LEDs or the hues of the colours.
+        brightness of the LEDs or the hues of the colors.
         :param float brightness: 0->1.0 - multiplier to use when getting pixels to display
         :return None: nothing
         """
@@ -188,22 +188,22 @@ class Chain():
         """
         self.hsv[n,ALPHA] = alpha
 
-    def setPixel(self,n,colour,alpha=1.0):
+    def setPixel(self,n,color,alpha=1.0):
         """
         sets the rgba values of a pixel at index n
         Throws a value error if n is not in the range 0->length of the chain
         :param n: pixel position in the chain
-        :param colour: tuple rgba in pixel order
+        :param color: tuple rgba in pixel order
         :return: nothing the pixel value is set in the chain
         """
         # ignore out of bounds LEDs
         if n<0 or n>=self.lenChain:
-            raise ValueError("chain.setPixel(n,colour,alpha) n ("+str(n)+") is out of range 0 to "+ str(self.lenChain-1))
+            raise ValueError("chain.setPixel(n,color,alpha) n ("+str(n)+") is out of range 0 to "+ str(self.lenChain-1))
 
-        h,s,v=colorsys.rgb_to_hsv(colour[RGB_R]/255.0,colour[RGB_G]/255.0,colour[RGB_B]/255.0)
+        h,s,v=colorsys.rgb_to_hsv(color[RGB_R]/255.0,color[RGB_G]/255.0,color[RGB_B]/255.0)
 
         # only affect channels upto but not including AntiAlias factor
-        self.hsv[n,:ALIAS]=[h,s,v,colour[ALPHA]/255.0]
+        self.hsv[n,:ALIAS]=[h,s,v,color[ALPHA]/255.0]
 
 
     def getPixelXY(self,n):
@@ -218,7 +218,7 @@ class Chain():
 
     def getPixel(self,n):
         """
-        returns the coordinates and colour of the pixel
+        returns the coordinates and color of the pixel
         :param n:
         :return: x,y,r,g,b,a
         """
@@ -226,8 +226,8 @@ class Chain():
             raise ValueError("chain.getPixel(n) n (" + str(n) + ") is out of range 0 to " + str(self.lenChain - 1))
 
         h,s,v,a=self.adjustPixel(self.hsv[n])
-        colour=colorsys.hsv_to_rgb(h,s,v)
-        return self.x[n],self.y[n],colour[RGB_R]*255,colour[RGB_G]*255,colour[RGB_B]*255,a*255
+        color=colorsys.hsv_to_rgb(h,s,v)
+        return self.x[n],self.y[n],color[RGB_R]*255,color[RGB_G]*255,color[RGB_B]*255,a*255
 
     def getAllPixels(self):
         """
@@ -236,7 +236,7 @@ class Chain():
 
         The pixelsd are adjusted for alpha, brightness and Alias
 
-        :return numpy ndarray x,numpy ndarray y,numpy ndarray colours: x,y,rgba
+        :return numpy ndarray x,numpy ndarray y,numpy ndarray colors: x,y,rgba
         """
         # we are going to mod the brightness of the output only
         # we don't want to change the stored pixels
@@ -264,27 +264,26 @@ class Chain():
         """
         return self.lenChain
 
-    def setAllPixels(self,colour):
+    def setAllPixels(self,color):
         """
-        sets all pixels to the same rgb colour
-        :param colour: tuple rgba in pixel order
-        :return: nothing the whole chain is set to the same colour
+        sets all pixels to the same rgb color
+        :param tuple color: tuple (rgba) in pixel order , pixels values 0 to 255
+        :return: nothing the whole chain is set to the same color
         """
-        r,g,b,a=colour[RGB_R]/255.0,colour[RGB_G]/255.0,colour[RGB_B]/255.0,colour[ALPHA]/255.0,
-        h,s,v,=colorsys.rgb_to_hsv(r,g,b)
+        if color is None:
+            h,s,v,a=0,0,0,0 # transparent black
+        else:
+            r,g,b,a=color[RGB_R]/255.0,color[RGB_G]/255.0,color[RGB_B]/255.0,color[ALPHA]/255.0,
+            h,s,v,=colorsys.rgb_to_hsv(r,g,b)
+
         # must not touch the AntiAlias value
         self.hsv[...,:ALIAS]=[h,s,v,a]   # ignore ALIAS channel
-
-        #self.hsv[:, ALPHA] = a
-        #self.hsv[:, HSV_H] = h
-        #self.hsv[:, HSV_S] = s
-        #self.hsv[:, HSV_V] = v
 
 
     def setAllPixelsRandom(self):
         """
-        sets all pixels in the chain to a random colour
-        :return: nothing the whole chain is set to random colours
+        sets all pixels in the chain to a random color
+        :return: nothing the whole chain is set to random colors
         """
         h=self.lenChain
         self.hsv[:,ALPHA]=np.random.random(size=self.lenChain)
