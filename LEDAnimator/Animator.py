@@ -108,6 +108,7 @@ class Animator(object):
             if (loopTime>frameInterval) and not self.warned:
                 print "Animator.run() Animation frame interval exceeded - check animation durations. " \
                                      "Total loopTime=",loopTime,"frameInterval=",frameInterval
+                self.warned=True
 
             # slow down animation cycleto match the required frameInterval
             # this gives a repeatable time interval for the animations
