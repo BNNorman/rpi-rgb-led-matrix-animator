@@ -114,12 +114,13 @@ class NumpyImage():
         elif self.image is not None:
             #TODO - untested
             #print "create a NumpyImage from a numpy image shaped like",self.image.shape
-            assert type(self.image) is np.ndarray,"image parameter should be a numpy image (ndarray)."
+            assert type(self.image) is np.ndarray,"NumpyImage.__initi__() image parameter should be a numpy image (" \
+                                                  "ndarray)."
             self.rgba_orig=self.image.copy()
             self.rgba_orig[...,ALPHA]=self.alpha    # set by caller
 
         else:
-            assert self.height>0 and self.width>0,self.classname+".__init__() no imagePath and width/height is zero."
+            assert self.height>0 and self.width>0,"NumpyImage.__init__() no imagePath and width/height is zero."
 
             self.rgba_orig=np.zeros([nearest(self.height),nearest(self.width),4],dtype=np.uint8)
             self.rgba_orig[...,ALPHA]=self.alpha    # set by caller
@@ -156,8 +157,8 @@ class NumpyImage():
         aw, ah =area
         v, h = alignMode
 
-        assert type(v) is str, self.classname + ".alignImage() Vertical alignMode character should be a string."
-        assert type(h) is str, self.classname + ".alignImage() Horizontal alingMode character should be a string."
+        assert type(v) is str, "NumpyImage.alignImage() Vertical alignMode character should be a string."
+        assert type(h) is str, "NumpyImage.alignImage() Horizontal alingMode character should be a string."
 
         v = v.upper()
         h = h.upper()
@@ -173,7 +174,7 @@ class NumpyImage():
         elif v == "B":
             Ypos = ah - ih
         else:
-            raise InvalidMode(self.classname + ".alignImage() Invalid vertical alignment mode", alignMode,
+            raise InvalidMode("NumpyImage.alignImage() Invalid vertical alignment mode", alignMode,
                               "should be T,C,M or B")
 
         if h == "L":
@@ -183,7 +184,7 @@ class NumpyImage():
         elif h == "R":
             Xpos = aw - iw
         else:
-            raise InvalidMode(self.classname + ".alignImage() Invalid horizontal alignment mode", alignMode,
+            raise InvalidMode("NumpyImage.alignImage() Invalid horizontal alignment mode", alignMode,
                               "should be L,C,M or R")
 
         return Xpos, Ypos
@@ -492,7 +493,6 @@ class NumpyImage():
 
         self.out[y, x] =alphaBlendPixel(color,self.out[y,x])
 
-    # TODO test this works
     def setPixelRandom(self, x, y):
         """
         sets the pixel(s) using randomised color channels and alpha.
@@ -629,7 +629,7 @@ class NumpyImage():
         tmp = cv2.cvtColor(tmp, HSV2PIXEL)
         self.out[:, :, :3] = tmp[:, :, :3]
 
-    def setBrightness(self,wanted):
+    def OFF_setBrightness(self,wanted):
         """
         Changes the overall brightness of the image
         self.rgba_cached is converted to HLS then L&S are scaled
@@ -645,6 +645,25 @@ class NumpyImage():
 
 
     def fade(self,percent):
+        """
+        Changes the overall alpha of the self.out image.
+
+        rgba_cached is not changed so it can be undone
+
+        :param float percent: 0->100 percentage visiblility
+        :return None: self.out is modified
+        """
+
+        assert percent>=0 and percent<=100, "NumpyImage.fade() wanted range is 0.0 to 100.0%"
+
+        # the eye has a square law response
+        # this makes the transition appear correct
+        factor=getActualBrightness(percent)
+
+        # alter the alpha
+        self.out[...,ALPHA]=int(factor*255)
+
+    def OFFfade(self,percent):
         """
         Changes the overall brightness and alpha of the self.out image.
 
