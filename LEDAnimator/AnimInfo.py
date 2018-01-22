@@ -29,7 +29,6 @@ class AnimInfo(object):
         for key,value in kwargs.iteritems():
             setattr(self,key,value)
 
-
     def nextFrame(self,debug=False):
         """
         called from Animator.run()
@@ -46,8 +45,9 @@ class AnimInfo(object):
             self.animFunc = self.animSeq.getNextAnimation()
 
         # chain is ignored by non-chain based animations
-        if self.debug: print "AnimInfo.nextFrame() Calling nextFrame() for",self.animFunc
         self.animFunc.chain=self.chain
-        if self.animFunc.nextFrame(self.debug):
+        self.animFunc.id=self.id
+
+        if self.animFunc.nextFrame(debug=self.debug,id=self.animFunc.id):
             self.animFunc = self.animSeq.getNextAnimation()
 

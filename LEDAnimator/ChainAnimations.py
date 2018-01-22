@@ -457,7 +457,7 @@ class Collider(ChainAnimBase):
             self.init = False
             return
 
-        if self.debug: print self.id, "ChainAnimations.Collider() step() running"
+        self._Debug("ChainAnimations.Collider() step() running")
 
         if self.collided:
             if self.fading:
