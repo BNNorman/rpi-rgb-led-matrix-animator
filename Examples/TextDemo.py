@@ -25,7 +25,7 @@ from LEDAnimator.Text import *
 
 
 FPS=30 # frames per sec for the animation
-DEBUG=False
+DEBUG=True
 
 if DEBUG:
     sys.stdout=sys.stderr   # unbuffered debug messages
@@ -60,7 +60,7 @@ bdfmsg=Text(text=bdfText, fontSize=12, fontFace="BDF", fgColor=Palette.XMAS,
 
 bdfSeq= AnimSequence([
     TextAnimations.Move (duration=20, speed=0.3, fps=FPS, startPos=(64,20), endPos=(-tLenBDF,20), text=bdfmsg,
-                         multiColored=True, Xpos=32,Ypos=32),
+                         multiColored=True, Xpos=32,Ypos=32,debug=DEBUG,id="BDFSEQ"),
 ])
 
 #-----------
@@ -68,7 +68,7 @@ cv2msg=Text(text=cv2Text,fontSize=12,fontFace=FONT_HERSHEY_SIMPLEX,
                  fgColor=Palette.XMAS,bgColor=(125,0,125,255))
 cv2Seq= AnimSequence([
     TextAnimations.Move (duration=20, speed=0.3, fps=FPS, startPos=(64,40), endPos=(-tLenCV2,40),  multiColored=True,
-                         text=cv2msg),
+                         text=cv2msg, debug=DEBUG,id="CV2SEQ"),
 ])
 
 #-----------
@@ -76,21 +76,21 @@ fadeTxt=Text(text="FADE IN", fontSize=12, fontFace="BDF", fgColor=Palette.RGB,
             bgColor=Palette.LOTS,Xpos=0,Ypos=5)
 
 fadeIn=AnimSequence([
-    TextAnimations.FadeIn(duration=10,speed=1,fps=FPS,Xpos=0,Ypos=5,text=fadeTxt,startPause=2)
+    TextAnimations.FadeIn(duration=10,speed=1,fps=FPS,Xpos=0,Ypos=5,text=fadeTxt,startPause=2,debug=DEBUG,id="FADEIN")
 ])
 
 #------------
 bkgnd=AnimSequence([
-    ImageAnimations.Wait(background=(255,0,255,255),duration=20,fps=FPS,Xpos=0,Ypos=0),
+    ImageAnimations.Wait(background=(255,0,255,255),duration=20,fps=FPS,Xpos=0,Ypos=0,debug=DEBUG,id="BKGND"),
 ])
 
 # create the animator object
 A= Animator(debug=DEBUG,fps=FPS)
-A.addAnimation(seq=bkgnd)
 # add the sequences the order is bottom layer to top layer
-A.addAnimation(seq=bdfSeq)  # bg images must be laid down first
-A.addAnimation(seq=cv2Seq)
-A.addAnimation(seq=fadeIn)
+A.addAnimation(seq=bkgnd,id="BKGND",debug=DEBUG)
+A.addAnimation(seq=bdfSeq,id="BDFSEQ",debug=DEBUG)
+A.addAnimation(seq=cv2Seq,id="CV2SEQ",debug=DEBUG)
+A.addAnimation(seq=fadeIn,id="FADEIN",debug=DEBUG)
 
 # run the animation
 try:
