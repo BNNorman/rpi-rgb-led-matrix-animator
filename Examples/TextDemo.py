@@ -38,7 +38,7 @@ PANEL_SERIES=2      # 2 in series = 64 leds horertical
 
 # The panel must be initialised first
 # params LEDspacing and LEDsize control the simulator window size
-Panel.init(rows=PANEL_ROWS, chain_len=PANEL_SERIES, parallel=PANEL_PARALLEL, fps=FPS,
+Panel.init(rows=PANEL_ROWS, chain_length=PANEL_SERIES, parallel=PANEL_PARALLEL, fps=FPS,
            debug=DEBUG,videoCapture=False,videoName="./TextDemo.avi")
 
 
