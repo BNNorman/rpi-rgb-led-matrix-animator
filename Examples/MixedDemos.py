@@ -42,7 +42,7 @@ PANEL_SERIES=2      # 2 in series = 64 leds horizontal
 
 # The panel must be initialised first as it provides width and height info for the animations
 # LEDSpacing and LEDSize determine the on-screen size of the simulator window (if used)
-Panel.init(rows=PANEL_ROWS, chain_len=PANEL_SERIES, parallel=PANEL_PARALLEL, fps=FPS,
+Panel.init(rows=PANEL_ROWS, chain_length=PANEL_SERIES, parallel=PANEL_PARALLEL, fps=FPS,
            debug=DEBUG, videoCapture=False, videoName="./MixedDemo.avi")
 
 ####################
