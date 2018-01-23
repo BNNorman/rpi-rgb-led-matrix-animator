@@ -70,7 +70,7 @@ except:
 Options = RGBMatrixOptions()
 Options.rows = 32           # 32 rows in each panel
 Options.parallel = 2        # two panels in parallel
-Options.chain_len = 2       # sub-panels per panel
+Options.chain_length = 2       # sub-panels per panel
 Options.gpio_slowdown = 2   # gets rid of flickering leds on my Pi3
 Options.debug=False
 
@@ -122,13 +122,14 @@ def init(**kwargs):
     :param kwargs: options for the matrix configuration
     :return: Nothing
     """
-    global matrix,simulating,width,height,frameBuffer
+    global matrix,simulating,width,height,frameBuffer,canvas
 
     print "Panel.init() starting.."
     sys.stdout.flush()
 
     for key, value in kwargs.iteritems():
-        setattr(Options,key,value)
+        # only accept valid RGBMatrix options
+        if getattr(Options,key,None) is not None: setattr(Options,key,value)
 
     # for the purposes of this application we don't use a canvas
     # since the graphics are managed internally and the real panel
@@ -136,12 +137,14 @@ def init(**kwargs):
     matrix=RGBMatrix(options=Options)
 
     height=Options.rows*Options.parallel
-    width=Options.rows*Options.chain_len
+    width=Options.rows*Options.chain_length
 
     print "Panel.init() creating frameBuffer width %d,height %d\n"% (width,height)
     sys.stdout.flush()
 
     frameBuffer=ni.NumpyImage(width=width,height=height)
+    if not simulating:
+        canvas=matrix.CreateFrameBuffer()
 
 def CheckInit():
     """
@@ -156,23 +159,25 @@ def UpdateDisplay():
     copies the frameBuffer to the RGBMatrix and refreshes the visible display
     :return: nothing
     """
-    global matrix,simulating
+    global matrix,simulating,canvas
 
     CheckInit()
 
     # simulator and physical matrices behave differently here
+    img=frameBuffer.getImageData()
+
     if simulating:
         # no matrix refresh needed here
-        matrix.SetImage(frameBuffer.out)
+        matrix.SetImage(img)
     else:
-        # TODO test this works ok on RPi
-        if not simulating:
-            frameBuffer.out[RGB_R]*=redAdjust
-            frameBuffer.out[RGB_G]*=greenAdjust
-            frameBuffer.out[RGB_B]*=blueAdjust
+        img[RGB_R]*=redAdjust
+        img[RGB_G]*=greenAdjust
+        img[RGB_B]*=blueAdjust
 
-        matrix.SetImage(frameBuffer.getPILImage())
-        matrix.SwapOnVSync(None)
+        # note Constants.RGB_R & RGB_B will need to be set RGB_R=0 and RGB_B=2
+        # to ensure RGB colours are in the correct order
+        canvas.SetImage(Image.fromarray(img).convert("RGB"))
+        canvas=matrix.SwapOnVSync(canvas)
 
 def DrawImage(x,y,image):
     """
