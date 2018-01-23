@@ -8,8 +8,9 @@ The code uses the following python libraries:-
 
 - numpy for fast array manipulation of images and lists
 - matplotlib - fast array conversion of hsv to rgb (mostly chain animations)
-- openCV - the simulator uses cv2.imshow() for display and video capture for publishing demos. It also uses openCV to
- load images for animations.
+- openCV 3 - the simulator uses cv2.imshow() for display and video capture for publishing demos. It also uses openCV to
+ load images for animations. There are differences between openCV versions with regard to constant definintions like 
+ cv2.LINE_AA (3.4) and cv2.AA (v2.4)
 - threading - the simulator runs in it's own thread to try to keep the frame rate up.
 - colorsys - for single pixel hsv to rgb conversion
 
