@@ -1,10 +1,12 @@
 # rpi-rgb-led-matrix-animator
-
-##NOTE. This is a work in progress at the moment but mostly working.
-
 Python code to play animation sequences on an RGB LED matrix panel using the HZeller (https://github.com/hzeller/rpi-rgb-led-matrix) drivers on a Raspberry Pi (Model 3 used)
 
 Inspired by the amazing ALA library for the Arduino.
+
+## NOTE. 
+This is a work in progress at the moment but mostly working. It runs on a Raspeberry Pi - albeit more slowly 
+than it runs on my 2.4Ghz quad core DELL Inspiron. However, it does work at a reasonable pace. 
+
 
 ## Currently supports:-
 
