@@ -49,7 +49,7 @@ PANEL_SERIES=2      # 2 in series = 64 leds horizontal
 PANEL_PARALLEL=2    # 2 in parallel = 64 leds vertical
 
 # must initialise the Panel first since some animations need the width and height
-Panel.init(rows=PANEL_ROWS, chain_len=PANEL_SERIES, parallel=PANEL_PARALLEL, fps=FPS, videoCapture=False,
+Panel.init(rows=PANEL_ROWS, chain_length=PANEL_SERIES, parallel=PANEL_PARALLEL, fps=FPS, videoCapture=False,
            videoName="./All_ChainAnimations.avi",debug=DEBUG)
 
 
