@@ -9,7 +9,7 @@ The real Hzeller RGBOptions
 class RGBMatrixOptions(object):
     rows = 32
     parallel = 2
-    chain_len = 2
+    chain_length = 2
     gpio_slowdown = 2       # gets rid of flickering leds on my Pi3
     drop_privileges = False # allow images to be loaded
 
@@ -27,7 +27,7 @@ class RGBMatrixOptions(object):
     def validate(self):
         assert type(self.parallel) is int, "parallel parameter should be an int."
         assert type(self.rows) is int, "rows parameter should be an int."
-        assert type(self.chain_len) is int, "chain_len parameter should be an int."
+        assert type(self.chain_length) is int, "chain_len parameter should be an int."
         assert type(self.gpio_slowdown) is int, "gpio_slowdown parameter should be an int."
         assert type(self.drop_privileges) is bool, "drop_privileges parameter should be a boolean."
         assert type(self.scale) is int, "scale parameter should be an int."
