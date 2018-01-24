@@ -24,9 +24,9 @@ So, PANEL_ROWS is 32 and PANEL_SERIES is 2.
 I have stacked two of these panels on top of each other so PANEL_PARALLEL=2.
 
 I also added a 3300uf electrolytic capacitor across the panel supply **at the connector on the panel** this helps the
- PSU cope with surges from rapid switching. Someone else calculated that value. Unfortunately I didn't record the 
- website I found it on but the full calculations were shown and they were correct for my 64x32 panels. If your panels
-  have half as many LEDs you can halve the value but it's not worth the money saved.
+ PSU cope with surges from rapid switching. The calculations are shown at the bottom of the [wiring](https://github
+ .com/hzeller/rpi-rgb-led-matrix/blob/master/wiring.md) document on 
+ HZeller's site. If your panels have half as many LEDs you can halve the value but it's not worth the money saved.
 
 There are a lot of other options as listed below. If added to the Panel.init() parameters they will be passed 
 straight through to the HZeller RGBMatrix drivers - they are ignored by the simulator.
