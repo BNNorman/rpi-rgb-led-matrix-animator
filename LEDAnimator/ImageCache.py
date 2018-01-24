@@ -54,14 +54,19 @@ def loadImage(imagePath):
 
     # must include any Alpha channel so read unchanged
     # openCV reads in BGR order. See Constants.py
-    cache[imagePath]=cv2.imread(imagePath,cv2.IMREAD_UNCHANGED)
+    srcBGR=cv2.imread(imagePath,cv2.IMREAD_UNCHANGED)
 
-    if cache[imagePath] is None:
+    if srcBGR is None:
         raise ImageLoadFailed
 
-    if not cache[imagePath].data:
+    if not srcBGR.data:
         raise NoImageData
 
+    # change image color channel order to match output
+    if RGB_R==0:
+        cache[imagePath]=cv2.cvtColor(srcBGR,cv2.COLOR_BGR2RGB)
+    else:
+        cache[imagePath]=srcBGR
 
     # add an alpha channel if needed
     # always used for Fadein/out effects
@@ -69,15 +74,6 @@ def loadImage(imagePath):
     if c < 4:
         alpha = np.full([h, w, 1], 255, dtype=np.uint8)  # opaquee
         cache[imagePath] = np.concatenate((cache[imagePath], alpha), axis=2)
-
-    if simulating:
-        return cache[imagePath]
-
-    # RGB Panel colour adjustment
-    # now done in Panel.py so all colours are adjusted
-    #cache[imagePath][:, :, RGB_R] *= redAdjust
-    #cache[imagePath][:, :, RGB_G] *= greenAdjust
-    #cache[imagePath][:, :, RGB_B] *= blueAdjust
 
     return cache[imagePath]
 
