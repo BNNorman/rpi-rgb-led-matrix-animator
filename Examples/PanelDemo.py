@@ -27,12 +27,17 @@ import PathSetter
 
 import sys
 import traceback
+import PathSetter
 
 from LEDAnimator import PanelAnimations, Palette, Animator, AnimSequence, ImageAnimations
 from LEDAnimator.Chain import *
 import LEDAnimator.Panel as Panel
 
 FPS=100 # frames per sec for the animation
+DEBUG=False
+
+if DEBUG:
+    sys.stdout=sys.stderr   # unbuffered output
 
 # my panel is 64x64 made up of two panels stacked on top of each other
 # each panel is a single piece but is made of two 32x32 panels side by side
@@ -41,8 +46,8 @@ PANEL_SERIES=2      # 2 in series = 64 leds horizontal
 PANEL_PARALLEL=2    # 2 in parallel = 64 leds vertical
 
 # must initialise the Panel first since some animations need the width and height
-Panel.init(rows=PANEL_ROWS, chain_len=PANEL_SERIES, parallel=PANEL_PARALLEL, fps=FPS, videoCapture=True,
-           videoName="./PanelDemo {width}x{height}.avi")
+Panel.init(rows=PANEL_ROWS, chain_length=PANEL_SERIES, parallel=PANEL_PARALLEL, fps=FPS, videoCapture=True,
+           videoName="./PanelDemo.avi")
 
 print("Creating the Animator and adding animations")
 
@@ -59,7 +64,7 @@ SEQ= AnimSequence.AnimSequence([
 ])
 
 
-A= Animator.Animator(fps=FPS,debug=True)
+A= Animator.Animator(fps=FPS,debug=DEBUG)
 A.addAnimation(seq=SEQ)
 
 
