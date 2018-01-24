@@ -18,6 +18,8 @@ print ("Starting, please wait...")
 
 import sys
 import traceback
+import PathSetter
+
 from Simulator.Exceptions import SimulatorWindowClosed
 
 from LEDAnimator import ImageAnimations,TextAnimations,ChainAnimations,Palette,Font,Text,Chain
