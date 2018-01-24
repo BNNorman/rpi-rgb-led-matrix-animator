@@ -81,7 +81,7 @@ fadeIn=AnimSequence([
 
 #------------
 bkgnd=AnimSequence([
-    ImageAnimations.Wait(background=(255,0,255,255),duration=20,fps=FPS,Xpos=0,Ypos=0,debug=DEBUG,id="BKGND"),
+    ImageAnimations.Wait(background=(65,0,65,255),duration=20,fps=FPS,Xpos=0,Ypos=0,debug=DEBUG,id="BKGND"),
 ])
 
 # create the animator object
