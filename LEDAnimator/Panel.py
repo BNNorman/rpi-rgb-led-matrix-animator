@@ -72,7 +72,6 @@ Options.rows = 32           # 32 rows in each panel
 Options.parallel = 2        # two panels in parallel
 Options.chain_length = 2       # sub-panels per panel
 Options.gpio_slowdown = 2   # gets rid of flickering leds on my Pi3
-Options.debug=False
 
 # on Linux not doing this prevents access to images (files)
 # after the RGBMatrix is created
