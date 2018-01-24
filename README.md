@@ -22,6 +22,8 @@ than it runs on my 2.4Ghz quad core DELL Inspiron. However, it does work at a re
 - image scaling with anti-aliasing  
 - BDF and openCV fonts 
 
+There's a [Youtube video]( https://youtu.be/hF6wfx8zTg0) you can watch which showcases a lot of the animations.
+
 See the docs folder for more information
 
 ## Licence
