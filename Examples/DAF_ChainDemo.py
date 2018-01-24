@@ -25,6 +25,7 @@ print ("Doing imports, please wait...")
 
 import sys
 import traceback
+import PathSetter
 
 from LEDAnimator import ChainAnimations, Palette, Animator, AnimSequence, ImageAnimations
 from LEDAnimator.Chain import *
