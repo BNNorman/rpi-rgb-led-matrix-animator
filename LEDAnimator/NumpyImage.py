@@ -465,8 +465,11 @@ class NumpyImage():
         """
         assert alpha>=0 and alpha<=255,"Alpha value should be int in range 0 to 255"
         assert type(alpha) is int,"Alpha value should be int"
+
+        # trap attempts to write beyond image bounds
         if x<0 or x>=self.width: return
         if y<0 or y>=self.height: return
+
         self.out[y,x,ALPHA]=alpha
 
     def setPixel(self, x, y, color):
