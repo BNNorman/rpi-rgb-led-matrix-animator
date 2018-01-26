@@ -132,8 +132,6 @@ class RGBMatrix(object):
         :return: nothing
         """
 
-        print "RGBMatrix./setImage()"
-
         # opencv reads images in BGR order
         # If we are in RGB order change it now
         # see Constants.py for RGB_R
