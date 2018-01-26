@@ -23,6 +23,7 @@ from ExceptionErrors import *
 import ImageCache
 from LEDAnimator.UtilLib import *
 import cv2
+import random
 
 # required to support PIL image formats for hzeller drivers
 # TODO - find out how to do this with numpy alone
@@ -484,6 +485,9 @@ class NumpyImage():
         :param int or numpy ndarray y: int [y0,y1,..yn] or y
         :return: the specified pixels are set to the corresponding color
         """
+        if type(color) is tuple: #(rgba)
+            self.out[y,x]=alphaBlendPixels(color,self.out[y,x])
+
         if type(color) is np.ndarray:
             assert type(x) is np.ndarray and type(y) is np.ndarray, "If color is a numpy ndarray then x and y must also be ndarrays."
             assert x.shape[:1] == y.shape[:1] == color.shape[:1], "Arrays must be of the same length."
