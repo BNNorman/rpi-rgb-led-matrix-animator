@@ -21,8 +21,6 @@ from LEDAnimator.UtilLib import pasteWithAlphaAt
 from LEDAnimator.Colors import *
 import sys
 
-LIBNAME="Panel"
-
 ##############################################################
 # are we simulating or running on the Raspberry Pi?
 # try the actual hzeller imports first
@@ -196,7 +194,6 @@ def DrawImage(x,y,image):
 
     # paste with Alpha converts X/y to nearest pixel
     pasteWithAlphaAt(frameBuffer.out,x,y,image)
-
 
 
 def DrawPixel(x,y,color):
