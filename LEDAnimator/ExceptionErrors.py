@@ -95,3 +95,7 @@ class NoSuchMethod(Error):
 class FileNotFound(Error):
     """attempt to access a disc file that doesn't exists"""
     pass
+
+class InvalidScale(Error):
+    """A scale value was given that is not in range"""
+    pass
