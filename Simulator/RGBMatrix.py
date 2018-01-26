@@ -9,17 +9,12 @@ mat=RGBMatrix(videoCapture=True,videoName="./HUB75 %dx%d.avi",)
 
 
 """
-import numpy as np
-import scipy.ndimage
-
 import threading
-#import cv2
+
 from Simulator.Exceptions import *
 from LEDAnimator.NumpyImage import *
-import time
 from LEDAnimator.Constants import *
 from Simulator.RGBMatrixOptions import RGBMatrixOptions
-
 
 class RGBMatrix(object):
 
@@ -29,9 +24,8 @@ class RGBMatrix(object):
     # internal variables
 
     video=None              # video stream, set if creating a video
-    classname="RGBMatrix"
     swapping=False
-    readyForSwap=False
+    readyForSync=False      # ties the display to the panel refresh rate
     running=False
     initDone=False
 
@@ -53,7 +47,7 @@ class RGBMatrix(object):
 
         # calculate the window size in pixels
         pixelWidth = self.options.rows * self.options.parallel
-        pixelHeight = self.options.rows * self.options.chain_len
+        pixelHeight = self.options.rows * self.options.chain_length
 
 
         # on-screen window dimensions
@@ -94,35 +88,64 @@ class RGBMatrix(object):
 
         self._waitForInit()
 
-
         return self.pixelHeight,self.pixelWidth
+
+
+    def numpyEnlarge(self,img,scale):
+        """
+        6x faster than scipy zoom
+
+        Simple Enlargement by duplicating pixels. Since LEDs are integer sizes
+        this gives a more realistuic effect and doesn;t require anti-aliasing
+
+        :param numpy ndarray img: the image to enlarge
+        :param int scale:
+        :return None: frameBuffer is resized
+        """
+        if scale==1:
+            # don't need alpha on output
+            self.frameBuffer=img[:ALPHA]
+            return
+        if scale<1:
+            raise InvalidScale("numpyEnlarge can only be used to enlarge. Got scale factor "+str(scale))
+
+        h,w=img.shape[:2]
+        for x in xrange(w):
+            for y in xrange(h):
+                pixel = img[y, x]
+                y1=y*scale
+                y2=y1+scale
+                x1=x*scale
+                x2=x1+scale
+                self.frameBuffer[y1:y2, x1:x2] = pixel[:ALPHA]
+
+
 
     def SetImage(self,img):
         """
         copies img to the frameBuffer for display
         does not need the simulator running to do this
 
+        simulator picks up this image in it's run loop
+
         :param img: numpy image (NOT NumpyImage)
         :return: nothing
         """
 
+        print "RGBMatrix./setImage()"
+
         # opencv reads images in BGR order
         # If we are in RGB order change it now
         # see Constants.py for RGB_R
+
         if RGB_R==0:
             im=cv2.cvtColor(img,cv2.COLOR_RGB2BGR)
         else:
             im=img
 
         # the on screen display will be a different size
-        if self.options.scale==1:
-            self.frameBuffer=im
-        else:
-            #extract just the RGB axes - alpha does not matter here
-            # just scale up the x,y dimensions using linear interpolation
-            # this gives a blocky appearance akin to a LED matrix
-            # and is SIGNIFICANTLY faster than using cv2.resize()
-            self.frameBuffer = scipy.ndimage.zoom(im[:,:,:3], (self.options.scale, self.options.scale, 1), order=0)
+        # it is expected to be bigger than the actual panel
+        self.numpyEnlarge(img,self.options.scale)
 
         if self.video:
             self.video.write(self.frameBuffer)
@@ -142,29 +165,34 @@ class RGBMatrix(object):
         Terminates when any key is pressed.
         :return: Nothing
         """
-        print self.classname+".run() starting the simulator window."
+        print "RGBMatrix.run() starting the simulator window."
         self.running = True
 
+        # open a window and size if as required
         cv2.namedWindow(self.windowTitle)
         cv2.imshow(self.windowTitle, self.frameBuffer)
 
-        r=cv2.waitKey(25)
+        r=cv2.waitKey(1)
+        if r<>255:
+            print "RGBMatrix.run() setting up window failed (keyboard key stuck?)."
+            return
 
         # frameDuration controls the refresh rate
         # so far I have not found any advantage in slowing it down
-        #frameDuration=int(1000.0/self.options.fps)  # millisec
-        frameDuration=1
-        print self.classname + ".run() entering the run loop"
+        #
+        frameDuration=int(1000.0/self.options.fps)  # millisec
+        #frameDuration=1
+        print "RGBMatrix.run() entering the run loop frameDuration=%.2fms"%(frameDuration)
 
         while self.running:
+            # refresh the displayed image
             cv2.imshow(self.windowTitle, self.frameBuffer)
-            #TODO: see if this works better running at max rate 1 millisec
             r=cv2.waitKey(frameDuration)
-
             if r<>255:
-                self.running = False # window keepalive
+                print "RGBMatrix.run() key pressed."
+                self.running = False # window closes
 
-        print self.classname + ".run() closed the simulator window."
+        print "RGBMatrix.run() closed the simulator window."
         if self.video: self.video.release()
         cv2.destroyAllWindows()
         raise SimulatorWindowClosed
