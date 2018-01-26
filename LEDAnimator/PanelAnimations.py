@@ -24,9 +24,9 @@ background      tuple       Color to use for the background
 
 from PanelAnimBase import PanelAnimBase
 import Panel
-from LEDAnimator.Helpers import Poisson
 from Palette import *
 from Constants import *
+from Helpers.PoissonLib import *
 
 ######################################################
 #
@@ -331,10 +331,13 @@ class Twinkle(PanelAnimBase):
     palette Palette list of Color object to select colors from
     """
 
+
     radius=5
+    checkPts=30 # number of points, on radius, to check for candidates
     palette=None
 
     p=None      # internal Poisson object
+    stars=None  # those that twinkle
     busy=False  # Poisson takes a lot of time to generate, this blocks re-entry till done
 
     def step(self,chain=None):
@@ -344,22 +347,11 @@ class Twinkle(PanelAnimBase):
             return
 
         if self.init:
-            if not self.busy:
-                self.busy=True
-
-                if self.p is None:
-                    # create the randomiser
-                    self.p= Poisson.Grid(self.radius, Panel.width, Panel.height)
-
-                # TODO replace Poisson code with numpy array based version
-                # there's a noticeable delay when this is called
-                # which is why it's only called once during reset
-                # a larger radius may speed this up as the Poisson code has less checks to make
-                self.fgImage.clear()
-                rand = (random.uniform(0, Panel.height), random.uniform(0, Panel.width))
-                self.stars=self.p.poisson(rand)
-                self.busy=False
-                self.init=False
+            self.fgImage.clear()
+            if self.stars is None:
+                p=PoissonLib()
+                self.stars=p.getSamples(30,self.radius,Panel.width,Panel.height)
+            self.init=False
 
         # main loop - iterate through the list of stars and
         # make them Twinkle by flickeing their colors
