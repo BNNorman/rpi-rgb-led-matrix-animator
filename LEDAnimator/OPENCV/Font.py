@@ -146,7 +146,7 @@ class Font():
         :return None: text is drawn on the img
         """
 
-        font = self.fontFace | cv2.FONT_ITALIC if self.italic else self.fontFace
+        font = self.fontFace | FONT_ITALIC if self.italic else self.fontFace
 
         # if fgColor is a Palette then we use the colors cyclically
         # which allows us to color each letter differently
