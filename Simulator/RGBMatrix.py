@@ -170,7 +170,7 @@ class RGBMatrix(object):
         cv2.namedWindow(self.windowTitle)
         cv2.imshow(self.windowTitle, self.frameBuffer)
 
-        r=cv2.waitKey(1)
+        r=0xFF & cv2.waitKey(1)
         if r<>255:
             print "RGBMatrix.run() setting up window failed (keyboard key stuck?)."
             return
@@ -185,7 +185,7 @@ class RGBMatrix(object):
         while self.running:
             # refresh the displayed image
             cv2.imshow(self.windowTitle, self.frameBuffer)
-            r=cv2.waitKey(frameDuration)
+            r=0xFF & cv2.waitKey(frameDuration)
             if r<>255:
                 print "RGBMatrix.run() key pressed."
                 self.running = False # window closes
