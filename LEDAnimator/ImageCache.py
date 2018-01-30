@@ -19,6 +19,7 @@ import os
 import numpy as np
 from LEDAnimator.ExceptionErrors import *
 from LEDAnimator.Constants import *
+from Constants import *
 
 # simple test to see if we are using the simulator or not
 # if rgbmartrix imports we are running for real
@@ -54,7 +55,7 @@ def loadImage(imagePath):
 
     # must include any Alpha channel so read unchanged
     # openCV reads in BGR order. See Constants.py
-    srcBGR=cv2.imread(imagePath,cv2.IMREAD_UNCHANGED)
+    srcBGR=cv2.imread(imagePath,IMREAD_UNCHANGED)
 
     if srcBGR is None:
         raise ImageLoadFailed
