@@ -5,8 +5,8 @@ The RGBMatrix only displays images
 Pixel animations are done by the Panel writing to an image which is
 then sent to display.
 
-On my Dell Inspiron quad core Q8200 2.33Ghz using a 64x64 image took 0.050265 seconds
-to write the image into the frame buffer - that (sadly) equates to a potential 20 frames per second
+On my Dell Inspiron quad core Q8200 2.33Ghz using a 64x64 image took 0.021850 seconds
+to write the image into the frame buffer - that (sadly) equates to a potential maximum 50 frames per second
 """
 from Simulator.RGBMatrix import *
 from LEDAnimator.NumpyImage import *
