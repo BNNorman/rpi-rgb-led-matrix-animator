@@ -6,13 +6,13 @@ Library with a variety of general purpose routines
 """
 
 import numpy as np
+from LEDAnimator.Decorators import *
 
 # alphaBlend sometimes throws a "RuntimeWarning: invalid value encountered in divide"
 # but still carries on without throwing an exception, the next line keeps it quiet
 np.seterr(divide='ignore', invalid='ignore')
 
 import BDF
-#from BDF import Font as bdf
 from Constants import *
 import cv2
 import colorsys
@@ -26,8 +26,10 @@ def alphaBlend(fg, bg):
     :param numpy ndarray bg: background numpy image
     :return: numpy ndarray blended images
     """
-    assert fg.shape[-1] >= 4, "Foreground image must have an alpha channel"
-    assert bg.shape[-1] >= 4, "background image must have an alpha channel"
+
+    # only include for debugging
+    #assert fg.shape[-1] >= 4, "Foreground image must have an alpha channel"
+    #assert bg.shape[-1] >= 4, "background image must have an alpha channel"
 
     # cannot blend images if shapes are not the same
     # normally this happens when moving one image over another so should be ok
@@ -66,23 +68,49 @@ def alphaBlend(fg, bg):
     out[..., :3] = out_rgb * 255
     out[..., 3] = out_a * 255
 
-    #print "UtilLib.alphaBlend() done."
-
     return out
 
-def alphaBlendPixel(fg,bg):
+def alphaBlendPixels(fg, bg):
     """
-    blends two pixels based on alpha.
+    Used internally by pasteWithAlphaAt() and alphaBlendPixel() but could be used externally
+    blend two images based on the alpha channel. src (fg) and dst (bg) MUST be the same size.
 
-    :param tuple fg: (rgba) in Pixel colour order
-    :param tuple bg: (rgbsa) in pixel colour order
-    :return:
+    :param tuple fg: foreground rgba
+    :param tuple bg: background rgba
+    :return tuple: rgba blended pixel
     """
-    # convert colors to single colour arrays
-    fg_arr=np.array(fg)
-    bg_arr=np.array(bg)
+    fg=[i/255.0 for i in fg]
+    bg=[i/255.0 for i in bg]
 
-    return alphaBlend(fg_arr,bg_arr)
+    out_a = fg[ALPHA] + bg[ALPHA] * (1.0 - fg[ALPHA])
+
+    # sometimes throws a "RuntimeWarning: invalid value encountered in divide"
+    # but still carries on without throwing an exception
+    out_rgb=[0,0,0]
+    out_rgb[0] = (fg[0] * fg[ALPHA]+ bg[0] * bg[ALPHA] * (1.0 - fg[ALPHA])) / out_a
+    out_rgb[1] = (fg[1] * fg[ALPHA]+ bg[1] * bg[ALPHA] * (1.0 - fg[ALPHA])) / out_a
+    out_rgb[2] = (fg[2] * fg[ALPHA]+ bg[2] * bg[ALPHA] * (1.0 - fg[ALPHA])) / out_a
+
+    return (out_rgb[0]*255,out_rgb[1]*255,out_rgb[2]*255,out_a*255)
+
+def alphaBlendPixel(fg, bg):
+    """
+    blends two colors based on alpha.
+
+    fg and bg can be numpy ndarrays or single color tuples.
+
+    This function routes the args to the required routine
+
+    :param tuple or ndarray fg: [(rgba)...] in Pixel colour order
+    :param tuple or ndarray bg: [(rgbsa)...] in pixel colour order
+    :return tuple or ndarray: alpha blended output
+    """
+    # convert colors to single colour arrays if not already arrays
+    # this change reduced the drawChainLayerOnLayerBuffer code time by .0003 secs
+    if type(fg) is tuple:
+        return alphaBlendPixels(fg, bg)
+    else:
+        return alphaBlend(fg,bg)
 
 def pasteWithAlphaAt(bg, bx, by, fg):
     """
@@ -99,10 +127,10 @@ def pasteWithAlphaAt(bg, bx, by, fg):
     :param numpy ndarray fg: image to paste into bg
     :return int or float: next x position (used for character strings)
     """
-    assert fg is not None, "fg (foreground) image cannot be None."
-    assert bg is not None, "bg (background) image cannot be None."
-    assert type(fg) is np.ndarray, "Image must be a numpy.ndarray (image)"
-    assert type(bg) is np.ndarray, "Image must be a numpy.ndarray (image)"
+    if fg is None: return bx
+    #assert bg is not None, "bg (background) image cannot be None."
+    #assert type(fg) is np.ndarray, "Image must be a numpy.ndarray (image)"
+    #assert type(bg) is np.ndarray, "Image must be a numpy.ndarray (image)"
 
     bx,by=nearest(bx),nearest(by)
 
@@ -217,7 +245,6 @@ def getOverlapCoords(bg,bx,by,fg):
 
     return sx0,sy0,sx1,sy1
 
-#TODO rename as getSlice???
 def getFgSlice(bg, x, y, fg):
     """
     Get the slice of fg which can be overlaid on to bg at x,y
