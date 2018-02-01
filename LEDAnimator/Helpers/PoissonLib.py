@@ -155,7 +155,7 @@ def get_point(k, refpt):
     # We failed to find a suitable point in the vicinity of refpt.
     return False
 
-def getSamples(k,r,w,h):
+def getSamples2(k,r,w,h):
 
     global coords_list,cells,a,mx,ny,samples,rx2,rxx2,PIx2,width,height
 
@@ -198,3 +198,9 @@ def getSamples(k,r,w,h):
             break
 
     return samples
+
+class PoissonLib():
+    pass
+
+    def getSamples(self,k,r,w,h):
+        return getSamples2(k,r,w,h)
