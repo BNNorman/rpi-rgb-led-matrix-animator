@@ -197,10 +197,21 @@ def getSamples2(k,r,w,h):
             print "Poissonlib.getSamples() exceeded limit."
             break
 
+    # check samples contain numbers
+    # there have been occasional NaN returned
+    for p in range(len(samples)):
+        try:
+            x,y=samples[p]
+            X,Y=int(x),int(y)
+        except ValueError:
+            del samples[p]
+
+    if len(samples)==0:
+            print "PoissonLib() failed to generate any samples."
+
     return samples
 
 class PoissonLib():
-    pass
 
     def getSamples(self,k,r,w,h):
         return getSamples2(k,r,w,h)
