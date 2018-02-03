@@ -486,7 +486,13 @@ class NumpyImage():
         :return: the specified pixels are set to the corresponding color
         """
         if type(color) is tuple: #(rgba)
-            self.out[y,x]=alphaBlendPixels(color,self.out[y,x])
+            # oddly this code occasionally throws ValueError: cannot convert float NaN to integer
+            # but x,y,color and self.out[y,x] are all integers (as observed by printing the type()
+            # of each variable involved. Hence this try/except workaround
+            try:
+                self.out[y, x] = alphaBlendPixels(color, self.out[y, x])
+            except ValueError:
+                return
 
         if type(color) is np.ndarray:
             assert type(x) is np.ndarray and type(y) is np.ndarray, "If color is a numpy ndarray then x and y must also be ndarrays."
