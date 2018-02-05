@@ -357,7 +357,9 @@ class Twinkle(PanelAnimBase):
         # make them Twinkle by flickeing their colors
 
         for (x,y) in self.stars:
-            color=self.getNextPaletteEntry().getPixelColor(alpha=random.uniform(0,1))
+
+            color=self.getNextPaletteEntry().getPixelColor(brightness=random.uniform(0,1),alpha=random.uniform(0,1))
+
 
             # using int cords prevents setPixel rounding 63.8 to 64 which causes
             # an error as the arrays are zero based
