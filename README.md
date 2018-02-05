@@ -24,7 +24,7 @@ than it runs on my 2.4Ghz quad core DELL Inspiron. However, it does work at a re
 
 There's a [Youtube video]( https://youtu.be/hF6wfx8zTg0) you can watch which showcases a lot of the animations.
 
-See the docs folder for more information
+See the docs folder for more information.
 
 ## Licence
 
@@ -50,8 +50,20 @@ The code is written in Python 2.7 and requires :-
 NOTE: I developed this using PyCharm and Anaconda 2. Anaconda has all the packages required already installed except 
 the HZeller drivers.
 
-
 On the Raspberry Pi you need to install the HZeller drivers (https://github.com/hzeller/rpi-rgb-led-matrix)
+
+## Installing the HZeller Drivers
+
+You MUST run HZellers examples to check the drivers work before running my code.
+
+In the Tests folder is a PanelCheck.py script. If you run that you should see HZellers simple-square. If not then you
+ may not have installed the library into the python dist-packages folder.
+
+Check /usr/local/lib/python2.7/dist-packages and look for the folder rgbmatrix. If it isn't there then you need to go
+ to the python folder in the clone folder and run
+ 
+ sudo make install
+
 
 ## Getting Started
 
