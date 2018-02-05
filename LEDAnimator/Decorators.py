@@ -63,8 +63,8 @@ def logging(func):
                 print "{0}() ran for {1:f}s".format(func.__name__, t2 - t1)
         except IndexError:
             print "{0}() ran for {1:f}s".format(func.__name__, t2 - t1)
-
         return result
+
     return wrapper
 
 
@@ -86,10 +86,7 @@ def counter(func):
                 print "{0} has been used {1} times".format(func.__name__, wrapper.count)
         except IndexError:
             print "{0} has been used {1} times".format(func.__name__, wrapper.count)
-        try:
-
-        except:
-
         return result
+
     wrapper.count=0
     return wrapper
