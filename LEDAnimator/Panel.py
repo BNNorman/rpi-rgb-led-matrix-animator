@@ -87,7 +87,7 @@ Options.drop_privileges = False
 ###########################################################################
 
 matrix = None                           # the RGB matrix
-canvas = None                           # not used - drawings done by Panel
+canvas = None                           # not used by the simulator
 frameBuffer=None                        # NumpyImage used to represent the current display
 panelBgColor=Black.getPixelColor()     # panel background color opaque Black
 width=0                                 # panel width in pixels
@@ -128,9 +128,7 @@ def init(**kwargs):
         # only accept valid RGBMatrix options
         if getattr(Options,key,None) is not None: setattr(Options,key,value)
 
-    # for the purposes of this application we don't use a canvas
-    # since the graphics are managed internally and the real panel
-    # driver doesn't give access to it's buffer (AFAIK)
+    #create the matrix object
     matrix=RGBMatrix(options=Options)
 
     height=Options.rows*Options.parallel
@@ -141,7 +139,7 @@ def init(**kwargs):
 
     frameBuffer=ni.NumpyImage(width=width,height=height)
     if not simulating:
-        canvas=matrix.CreateFrameBuffer()
+        canvas=matrix.CreateFrameCanvas()
 
 def CheckInit():
     """
