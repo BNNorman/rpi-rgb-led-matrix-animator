@@ -62,15 +62,25 @@ In the Tests folder is a PanelCheck.py script. If you run that you should see HZ
 Check /usr/local/lib/python2.7/dist-packages and look for the folder rgbmatrix. If it isn't there then you need to go
  to the python folder in the clone folder and run
  
- sudo make install
-
+    sudo make install
 
 ## Getting Started
 
+Clone the repo into a folder.
+
 Try running the Examples then look at the code - I've tried to make it as flexible and intuitive as possible.
 
-There will be some video demos on YouTube or you can look at Norman Truck Logos on Facebook to see the development of
- some of the animations.
+On the Pi, to run the examples (e.g. PanelDemo.py) you need to cd into the Examples folder then:-
+
+    sudo python PanelDemo.py
+
+There will be some video demos on YouTube and in the Examples folder or you can look at Norman Truck Logos on Facebook
+ to see the development of some of the animations.
+
+If you use PyCharm to clone the repo you just run the scripts the same way as any other PyCharm project.
+
+Please note. If you run on a Windows PC the code will automatically utilise the Simulator - it is intended for 
+developing animations to be run on the Pi later.
 
 ## Apologies
 
