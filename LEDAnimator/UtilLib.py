@@ -6,7 +6,6 @@ Library with a variety of general purpose routines
 """
 
 import numpy as np
-from LEDAnimator.Decorators import *
 
 # alphaBlend sometimes throws a "RuntimeWarning: invalid value encountered in divide"
 # but still carries on without throwing an exception, the next line keeps it quiet
