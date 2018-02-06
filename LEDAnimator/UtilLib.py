@@ -227,14 +227,14 @@ def getOverlapCoords(bg,bx,by,fg):
 
     # calc slice end coords
     if bx+fw>bw:
-        sx1=sx0+bw-bx-1    # zero based
+        sx1=sx0+bw-bx    # zero based
     else:
-        sx1=sx0+fw-1
+        sx1=sx0+fw
 
     if by+fh>bh:
-        sy1=sy0+bh-by-1
+        sy1=sy0+bh-by
     else:
-        sy1=sy0+fh-1
+        sy1=sy0+fh
 
     if (sx1-sx0)==0 or (sy1-sy0)==0:
         #print "UtilLib.getOverlapCoords() Zero width or height overlap."
