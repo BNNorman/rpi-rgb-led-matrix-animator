@@ -243,7 +243,7 @@ def GetPixel(x,y):
     CheckInit()
 
     # Pixel X, Y values are rounded by the frameBuffer
-    frameBuffer.getPixel(x, y)
+    return frameBuffer.getPixel(x, y)
 
 def Clear():
     """
