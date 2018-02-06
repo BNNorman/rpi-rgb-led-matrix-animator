@@ -15,6 +15,7 @@ from Simulator.Exceptions import *
 from LEDAnimator.NumpyImage import *
 from LEDAnimator.Constants import *
 from Simulator.RGBMatrixOptions import RGBMatrixOptions
+import cv2
 
 class RGBMatrix(object):
 
@@ -149,7 +150,20 @@ class RGBMatrix(object):
             self.video.write(self.frameBuffer)
 
     def startVideo(self,fname):
-        fourcc = cv2.VideoWriter_fourcc(*'DIVX')
+        """
+        attempt to create a video stream.
+        :param string fname: the output filename like video.avi
+        :return None: self.video is set up as a stream (or not)
+        """
+
+
+        try:
+            fourcc = cv2.cv.CV_FOURCC(*'DIVX')
+
+        except Exception as e:
+            #print "Exception ",e.args
+            fourcc = cv2.VideoWriter_fourcc(*'DIVX')
+
         self.video = cv2.VideoWriter(fname, fourcc, 10, (self.screenWidth, self.screenHeight))
         if self.video is None:
             print "VideoWriter failed to start."
