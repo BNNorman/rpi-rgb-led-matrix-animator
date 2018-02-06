@@ -8,6 +8,7 @@ examples can import the LEDAnimator library bits and pieces.
 # Running the examples on Windows
 
 On the command line simply:-
+
     python <example>
 
 From within, say,PyCharm just open the example and use the menu option Run or right click the window tab and select Run.
