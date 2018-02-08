@@ -25,7 +25,7 @@ from LEDAnimator.Text import *
 
 
 FPS=30 # frames per sec for the animation
-DEBUG=True
+DEBUG=False
 
 if DEBUG:
     sys.stdout=sys.stderr   # unbuffered debug messages
@@ -59,7 +59,7 @@ bdfmsg=Text(text=bdfText, fontSize=12, fontFace="BDF", fgColor=Palette.XMAS,
             bgColor=Palette.LOTS)
 
 bdfSeq= AnimSequence([
-    TextAnimations.Move (duration=20, speed=0.3, fps=FPS, startPos=(64,20), endPos=(-tLenBDF,20), text=bdfmsg,
+    TextAnimations.MoveTimed (duration=20, speed=0.3, fps=FPS, startPos=(64,20), endPos=(-tLenBDF,20), text=bdfmsg,
                          multiColored=True, Xpos=32,Ypos=32,debug=DEBUG,id="BDFSEQ"),
 ])
 
@@ -67,7 +67,8 @@ bdfSeq= AnimSequence([
 cv2msg=Text(text=cv2Text,fontSize=12,fontFace=FONT_HERSHEY_SIMPLEX,
                  fgColor=Palette.XMAS,bgColor=(125,0,125,255))
 cv2Seq= AnimSequence([
-    TextAnimations.Move (duration=20, speed=0.3, fps=FPS, startPos=(64,40), endPos=(-tLenCV2,40),  multiColored=True,
+    TextAnimations.MoveTimed (duration=20, speed=0.3, fps=FPS, startPos=(64,40), endPos=(-tLenCV2,40),
+                             multiColored=True,
                          text=cv2msg, debug=DEBUG,id="CV2SEQ"),
 ])
 
