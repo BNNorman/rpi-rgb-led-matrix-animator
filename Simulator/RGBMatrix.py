@@ -74,6 +74,11 @@ class RGBMatrix(object):
         self.initDone=True
 
 
+    def CreateFrameCanvas(self):
+        # only here to stop PyCharm highlighting it when it shouldn't
+        return
+
+
     def _waitForInit(self):
         print "RGBMatrix.getShape() init not done - waiting"
         while not self.initDone:
