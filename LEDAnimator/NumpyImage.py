@@ -454,7 +454,8 @@ class NumpyImage():
         :param int y:
         :return tuple: color (rgba) in Pixel order
         """
-        return self.out[y,x]
+        a,b,c,d= self.out[y,x]
+        return (a,b,c,d)
 
     def setPixelAlpha(self,x,y,alpha=255):
         """
@@ -488,6 +489,8 @@ class NumpyImage():
 
         if color is None: return
 
+        print "type(x)=", type(x), "type(y)=", type(y),"type(color)=",type(color)
+
         if type(color) is tuple: #(rgba)
             # oddly this code occasionally throws ValueError: cannot convert float NaN to integer
             # but x,y,color and self.out[y,x] are all integers (as observed by printing the type()
@@ -499,6 +502,7 @@ class NumpyImage():
                 return
 
         if type(color) is np.ndarray:
+            print "type(x)=",type(x),"type(y)=",type(y)
             assert type(x) is np.ndarray and type(y) is np.ndarray, "If color is a numpy ndarray then x and y must also be ndarrays."
             assert x.shape[:1] == y.shape[:1] == color.shape[:1], "Arrays must be of the same length."
 
