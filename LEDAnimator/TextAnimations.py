@@ -150,6 +150,99 @@ class Move(TextAnimBase):
         self.origin=(self.Xpos,self.Ypos)   # origin is used by drawText
         self.refreshCanvas()
 
+
+class MoveTimed(TextAnimBase):
+    """
+    another general purpose text mover.
+
+    Will slide text from startPos(x,y) to endPos(x,y) over time duration-startPause-endPause.
+
+    This makes it more intuitive to use.
+
+    Does not use speed!
+    Does not loop.
+
+    """
+
+    startPos=(0,0)      # where we come back to when we cycle
+    endPos=(0,0)        # where we end up
+    origin=startPos     # used by drawText
+    xScrollRate = 0         # not moving - number of steps to move (+/-)
+    yScrollRate = 0         # not moving
+    yLimit=Panel.height # recalculated based on the text size
+    xLimit=Panel.width
+    multiColored=False  # now in the text object
+    startPause=0        # hold text at start
+    endPause=0          # hold text at end
+    moveTime=0          # time available between the start and end pauses (if any)
+
+    def calcScrollRate(self):
+        # initial drawing position
+        self.Xpos, self.Ypos = self.startPos
+
+        xStart, yStart = self.startPos
+        xEnd, yEnd = self.endPos
+
+        # calculate the ammount to move
+        # and remember these
+
+        self.moveTime = (self.duration - self.startPause - self.endPause)
+        assert (self.moveTime > 0), "duration is not long enough. check duration,startPause and endPause values."
+
+        self.xScrollRate = (xEnd - xStart) / self.moveTime
+        self.yScrollRate = (yEnd - yStart) / self.moveTime
+
+        print "StartX,Y",xStart,yStart,"end ",xEnd,yEnd
+        print "duration",self.duration,"move time=",self.moveTime,"scrollRate x",self.xScrollRate,"y",self.yScrollRate
+
+
+    def step(self):
+
+        if self.init:
+            self.startTime=time.time()
+            self.fgColor=self.getFgColor()
+            self.origin = self.startPos
+            self.multiColored=self.text.getMultiColored()
+            self.drawText()
+            self.calcScrollRate()
+            self.init = False
+
+            self.animLoops=False    # force the animation to run once
+
+        # are we in the startPause period?
+        if self.startPaused(): return
+
+        # waiting for the endPause to expire?
+        if self.endPaused(): return
+
+        # animation has finished
+        if time.time()>=self.startTime+(self.duration - self.endPause):
+            self.animationHasFinished()
+            return
+
+        # how long since this animation started?
+        tElapsed=time.time()-self.startTime-self.startPause # begins after the startPause
+
+        # move the text drawing point
+        startX, startY = self.startPos
+        self.Xpos=startX+tElapsed*self.xScrollRate
+        self.Ypos=startY+tElapsed*self.yScrollRate
+
+        # have we reached the end points?
+        # the calculation is complicated by direction of movement.
+        xEnd,yEnd=self.endPos
+
+        # possible bug - could reach xEnd before yEnd
+        # though should not need to check Y because it's a straight line
+        if self.xScrollRate>0:  # moving right
+            if self.Xpos>=xEnd: self.init=True
+        else:
+            if self.Xpos<=xEnd: self.init=True
+
+        self.origin=(self.Xpos,self.Ypos)   # origin is used by drawText
+        self.refreshCanvas()
+
+
 class Wait(TextAnimBase):
     """
     wait does nothing except refresh the canvas for the duration
