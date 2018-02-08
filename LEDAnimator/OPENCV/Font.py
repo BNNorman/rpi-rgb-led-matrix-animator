@@ -108,7 +108,7 @@ class Font():
 
         Individual characters can have different widths so we fake it using the letter W
 
-        It is better to use getSize(msg) to find the actual width of the whole message
+        It is better to use getText(msg) to find the actual width of the whole message
 
         :return int,int,int: width,height,baseline (measured from top)
         """
@@ -127,8 +127,14 @@ class Font():
         :return int,int: width,height of the bounding box
         """
 
-        (w,h),b=cv2.getTextSize(text,self.fontFace,self.fontScale,self.thickness)
-        return w,h+b
+        # opencv routine seems to get this wrong (too short)
+        #(w,h),b=cv2.getTextSize(text,self.fontFace,self.fontScale,self.thickness)
+
+        len=0
+        for ch in text:
+            (w, h), b = cv2.getTextSize(ch, self.fontFace, self.fontScale, self.thickness)
+            len+=w
+        return len,h+b
 
     def drawText(self,img,x,y,message,fgColor):
         """
@@ -153,11 +159,13 @@ class Font():
         # otherwise all the letters are colored with fgColor
         # Background colors are handled by textAnimBase
 
+        print "OPENCV\Font.py().drawText() img shape",img.shape
+
         if isinstance(fgColor,Palette):
             Xpos=x
             for ch in message:
+                (w, h), b = cv2.getTextSize(ch, self.fontFace, self.fontScale, self.thickness)
                 color=fgColor.getNextEntry().getPixelColor()
-                w,h=self.getTextBbox(ch) # h is unused
                 cv2.putText(img, ch,(Xpos,y), font, self.fontScale, color,self.thickness,self.lineType,False)
                 Xpos+=w
         else:
