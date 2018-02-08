@@ -6,6 +6,7 @@ Library with a variety of general purpose routines
 """
 
 import numpy as np
+import time
 
 # alphaBlend sometimes throws a "RuntimeWarning: invalid value encountered in divide"
 # but still carries on without throwing an exception, the next line keeps it quiet
@@ -33,8 +34,8 @@ def alphaBlend(fg, bg):
     # cannot blend images if shapes are not the same
     # normally this happens when moving one image over another so should be ok
     if fg.shape<>bg.shape:
-        #print "UtilLib.alphaBlend() images not the same shape. Ignored. fg", fg.shape, "bg", bg.shape
-        return
+        print "UtilLib.alphaBlend() images not the same shape. Ignored. fg", fg.shape, "bg", bg.shape
+        return None
 
     # are we blending a single pixel? shape=4L, (len==1) otherwise like 10L,10L,4L (len==3)
     # if so don't check height or width
@@ -42,13 +43,13 @@ def alphaBlend(fg, bg):
         # cannot blend images which have a zero width or height
         w,h=fg.shape[:2]
         if w==0 or h==0:
-            #print "UtilLib.alphaBlend() fg image has a zero dimension. Ignored"
-            return
+            print "UtilLib.alphaBlend() fg image has a zero dimension. Ignored"
+            return None
 
         w,h=bg.shape[:2]
         if w==0 or h==0:
-            #print "UtilLib.alphaBlend() bg image has a zero dimension. Ignored"
-            return
+            print "UtilLib.alphaBlend() bg image has a zero dimension. Ignored"
+            return None
 
 
     src_rgb = fg[..., :3].astype(np.float32) / 255.0
@@ -115,7 +116,7 @@ def pasteWithAlphaAt(bg, bx, by, fg):
     """
     Pastes fg into bg using alpha channel.
 
-    If fg does not overlap does nothing returns the next X position (bx)
+    If fg does not overlap does nothing just returns the next X position (bx)
 
     If fg is pasted into bg, returns the next Z position - useful
     for butting images together like when drawing text glyphs
@@ -124,61 +125,36 @@ def pasteWithAlphaAt(bg, bx, by, fg):
     :param float bx: coordinate of top left corner for fg on bg
     :param float by: coordinate of top left corner for fg on bg
     :param numpy ndarray fg: image to paste into bg
-    :return int or float: next x position (used for character strings)
+    :return int : next x position (used for character strings)
     """
-    if fg is None: return bx
-    #assert bg is not None, "bg (background) image cannot be None."
-    #assert type(fg) is np.ndarray, "Image must be a numpy.ndarray (image)"
-    #assert type(bg) is np.ndarray, "Image must be a numpy.ndarray (image)"
 
-    bx,by=nearest(bx),nearest(by)
+    # ignore if there's no foreground image
+    if fg is None:
+        return bx
 
-    #print "fg",fg.shape,"bg",bg.shape,"x,y",bx,by
+    bx0,by0=nearest(bx),nearest(by)
+
+    h,w=fg.shape[:2]
 
     # get the slice of the fg image that fits within the bg image at bx,by
-    fgROI=getOverlapCoords(bg,bx,by,fg)
+    fgROI,bgROI=getOverlapSlices(bg,bx0,by0,fg)
 
-    # if none don't bother doing anything
-    if fgROI is None:
-        #print "UtilLib.pasteWithAlphaAt()) ROI is None - ignored"
+    # if None don't bother doing anything
+    if fgROI is None or bgROI is None:
         return bx
 
-    x0,y0,x1,y1=fgROI
+    blend=alphaBlend(fgROI,bgROI)
 
-    #print "utilLib.pasteWithAlphaAt() ROI=",x0,y0,x1,y1
-
-    # the ROI is always within the bg image
-    if bx<0: bx=0
-    if by<0: by=0
-
-    rw=x1-x0
-    rh=y1-y0
-
-    # if the ROI has no width or height don't bother
-    if rw==0 or rh==0:
-        #print "UtilLib.pasteWithAlphaAt()) zero size rw=",rw,"rh=",rh,"ignored"
-        return bx
-
-    # blend the background and foreground and put it back
-    # into bg
-    # both images must be the same size for alphaBlend
-
-    # set the ROI
-    F=fg[y0:y1, x0:x1]
-    B=bg[by:by+rh, bx:bx + rw]
-
-    blend=alphaBlend(F,B)
     if blend is None:
-        #print "UtilLib,pasteWithAlphaAt() Blend is None"
         return bx
 
     # copy blend output to background
-    #print "Shape bg",B.shape,"blend",blend.shape
-    B[:,:,:]=blend[:,:,:]
+    bgROI[:,:,:]=blend[:,:,:]
 
-    #print "UtilLib.pasteWithAlphaAt() finished"
+    h,w=fg.shape[:2]
 
-    return bx+rw
+    # value used fior font rendering, ignored at other times
+    return bx+w
 
 
 def getActualBrightness(wanted):
@@ -195,82 +171,71 @@ def getActualBrightness(wanted):
 
     return (wanted*wanted)/(10000.0)
 
-def getOverlapCoords(bg,bx,by,fg):
+def getOverlapSlices(bg,fx0,fy0,fg):
     """
-    returns the coords of the top left and bottom right of the area
-    of fg placed at bx,by on bg or None if no overlap
+    returns the slices of bg and fg which overlap
 
-    :param numpy ndarray bg: background image always at 0,0
-    :param float or int bx: horizontal position of fg relative to bg
-    :param float or int by: vertical position of fg relative to bg
-    :param numpy ndarray fg: foreground image to place at bx,by
-    :return None or tuple: None or (x0,y0,x1,y1) for fg
-    """
-    bh,bw=bg.shape[:2]
-    fh,fw=fg.shape[:2]
-
-    #print "UtilLib.getOverlapCoords() bg",bw,bh,"xy",bx,by,"fg",fw,fh
-
-    # initialise slice coord values to fg
-
-    sx0,sy0=0,0
-    sx1,sy1=fw-1,fh-1
-
-    # calc slice start coordinates
-    if bx<0:
-        sx0=abs(bx)
-        bx=0
-
-    if by<0:
-        sy0=abs(by)
-        by=0
-
-    # calc slice end coords
-    if bx+fw>bw:
-        sx1=sx0+bw-bx    # zero based
-    else:
-        sx1=sx0+fw
-
-    if by+fh>bh:
-        sy1=sy0+bh-by
-    else:
-        sy1=sy0+fh
-
-    if (sx1-sx0)==0 or (sy1-sy0)==0:
-        #print "UtilLib.getOverlapCoords() Zero width or height overlap."
-        return None
-
-    #print "UtilLib.getOverlapCoords() returns sx0,sy0,sx1,sy1", sx0,sy0,sx1,sy1
-
-    return sx0,sy0,sx1,sy1
-
-def getFgSlice(bg, x, y, fg):
-    """
-    Get the slice of fg which can be overlaid on to bg at x,y
-
-    If fg fits wholly in bg returns fg otherwise the slice
-
-    If fg does not lie within bg returns None
+    Since the background image is allways at 0,0 the coordinates will be within the background image
 
     :param numpy ndarray bg: background image
-    :param float x: coordinates elative to bg
-    :param float y:
-    :param numpy ndarray fg: the image to overlay
-    :return numpy ndarray: the sliced fg or None
+    :param float or int x: x cordinate of fg within bg
+    :param float or int y: y coordinate of fg within bg
+    :param numpy ndarray fg: foreground image
+    :return: foregroundimage slice,background image slice
     """
-    coords=getOverlapCoords(bg,x,y,fg)
+    # get rectangle coords for the foreground image
+    fh,fw=fg.shape[:2]
+    fx1=fx0+fw-1
+    fy1=fy0+fh-1
 
-    if coords is None: return None
+    # background image is always at 0,0
+    bh,bw=bg.shape[:2]
+    bx0,by0=0,0
+    bx1=bw-1
+    by1=bh-1
 
-    x0,y0,x1,y1=coords
-    # resolve for nearest pixel
-    # slices MUST be integers
-    x0 = nearest(x0)
-    x1 = nearest(x1)
-    y0 = nearest(y0)
-    y1 = nearest(y1)
+    # make sure fg & bg actually overlap, if not there are no slices
+    if (fx0>bx1) or (fy0>by1) or (fx1<0) or (fy1<0):
+        return None,None
 
-    return fg[y0:y1, x0:x1]
+    # get intersect coords for background slice
+    bsx0=max(fx0,bx0)
+    bsx1=min(fx1,bx1)+1
+
+    bsy0=max(fy0,by0)
+    bsy1=min(fy1,by1)+1
+
+    # check we have a valid slice by calculating its area
+    if (bsx1-bsx0)*(bsy1-bsy0)==0:
+        return None,None
+
+    # set the background slice
+    bgSlice=bg[bsy0:bsy1,bsx0:bsx1]
+
+    # deal with fg images which hang over the left or top edges of bg
+    if fx0<0:
+        # foreground slice is offset into the foreground image
+        fsx0=abs(fx0)
+        fsx1=fsx0+bsx1-bsx0
+    else:
+        fsx0=0
+        fsx1=bsx1-bsx0
+
+    if fy0<0:
+        # foreground slice protrudes above the background
+        fsy0=abs(fy0)
+        fsy1=fy1-fy0+1
+    else:
+        fsy0=0
+        fsy1=fy1-fy0+1
+
+    # ignore if the foreground slice has zero area
+    if (fsx1-fsx0)*(fsy1-fsy0)==0:
+        return None,None
+
+    fgSlice=fg[fsy0:fsy1,fsx0:fsx1]
+
+    return fgSlice,bgSlice
 
 def nearest(n):
     """
@@ -286,22 +251,6 @@ def nearest(n):
     if type(n) is None: return
     n=float(n) # make sure n is a float
     return int(round(n,0))
-
-def pasteOpaqueAt( bg, x, y, im):
-    """
-    paste im into bg overwriting whatever was there
-    :param bg: numpy image
-    :param x:  top left corner to paste at
-    :param y:
-    :param im: image to paste in
-    :return:
-    """
-    h, w = im.shape[:2]
-    if h * w == 0: return  # zero sized image - ignore it
-    x, y = nearest(x), nearest(y)
-
-    bg[y:y + h, x:x + w, :3] = im[:, :, :3]
-    return bg
 
 def insideRect(x,y,x0,y0,x1,y1):
     """
@@ -330,7 +279,6 @@ def insideWindow(x,y,window):
     x0,y0,w,h=window
     return insideRect(x,y,x0,y0,x0+w,y0+h)
 
-
 def addParentToSysPath(atStart=True):
     """
     add the parent folder to the sys.path. If the folder is already included does nothing.
@@ -347,7 +295,6 @@ def addParentToSysPath(atStart=True):
             sys.path.insert(0, parent)
         else:
             sys.path.append(parent)
-
 
 def addFolderToParentPath(folder):
     """
