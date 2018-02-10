@@ -188,6 +188,8 @@ def getOverlapSlices(bg,fx0,fy0,fg):
     fx1=fx0+fw-1
     fy1=fy0+fh-1
 
+    trap=True if fw>200 else False
+
     # background image is always at 0,0
     bh,bw=bg.shape[:2]
     bx0,by0=0,0
@@ -200,10 +202,9 @@ def getOverlapSlices(bg,fx0,fy0,fg):
 
     # get intersect coords for background slice
     bsx0=max(fx0,bx0)
-    bsx1=min(fx1,bx1)+1
-
+    bsx1=min(fx1,bx1)
     bsy0=max(fy0,by0)
-    bsy1=min(fy1,by1)+1
+    bsy1=min(fy1,by1)
 
     # check we have a valid slice by calculating its area
     if (bsx1-bsx0)*(bsy1-bsy0)==0:
@@ -224,16 +225,17 @@ def getOverlapSlices(bg,fx0,fy0,fg):
     if fy0<0:
         # foreground slice protrudes above the background
         fsy0=abs(fy0)
-        fsy1=fy1-fy0+1
+        fsy1=fy1-fy0
     else:
         fsy0=0
-        fsy1=fy1-fy0+1
+        fsy1=fy1-fy0
 
     # ignore if the foreground slice has zero area
     if (fsx1-fsx0)*(fsy1-fsy0)==0:
         return None,None
 
     fgSlice=fg[fsy0:fsy1,fsx0:fsx1]
+
 
     return fgSlice,bgSlice
 
