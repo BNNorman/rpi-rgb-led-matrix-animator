@@ -192,9 +192,6 @@ class MoveTimed(TextAnimBase):
         self.xScrollRate = (xEnd - xStart) / self.moveTime
         self.yScrollRate = (yEnd - yStart) / self.moveTime
 
-        print "StartX,Y",xStart,yStart,"end ",xEnd,yEnd
-        print "duration",self.duration,"move time=",self.moveTime,"scrollRate x",self.xScrollRate,"y",self.yScrollRate
-
 
     def step(self):
 
