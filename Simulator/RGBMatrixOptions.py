@@ -8,7 +8,7 @@ The real Hzeller RGBOptions
 
 class RGBMatrixOptions(object):
     rows = 32
-    cols=32
+    cols = 32
     parallel = 2
     chain_length = 2
     gpio_slowdown = 2       # gets rid of flickering leds on my Pi3
