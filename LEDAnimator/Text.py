@@ -30,6 +30,7 @@ class Text():
     fontSize=None       # integer, pixels
     multiColored=False  # if True each character is rendered cyclically using the Palette colours
     Xpos,Ypos=0,0
+    lineType=None       # only used by hershey fonts
 
     def __init__(self, **kwargs):
         for key, value in kwargs.iteritems():
