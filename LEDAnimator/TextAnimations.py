@@ -215,13 +215,13 @@ class MoveTimed(TextAnimBase):
         # waiting for the endPause to expire?
         if self.endPaused(): return
 
-        # animation has finished
-        if time.time()>=self.startTime+(self.duration - self.endPause):
-            self.animationHasFinished()
-            return
-
         # how long since this animation started?
         tElapsed=time.time()-self.startTime-self.startPause # begins after the startPause
+
+        # animation has finished
+        if tElapsed >= self.duration:
+            self.animationHasFinished()
+            return
 
         # move the text drawing point
         startX, startY = self.startPos
@@ -235,9 +235,11 @@ class MoveTimed(TextAnimBase):
         # possible bug - could reach xEnd before yEnd
         # though should not need to check Y because it's a straight line
         if self.xScrollRate>0:  # moving right
-            if self.Xpos>=xEnd: self.init=True
+            if self.Xpos>=xEnd:
+                return
         else:
-            if self.Xpos<=xEnd: self.init=True
+            if self.Xpos<=xEnd:
+                return
 
         self.origin=(self.Xpos,self.Ypos)   # origin is used by drawText
         self.refreshCanvas()
