@@ -51,7 +51,7 @@ class TextAnimBase(AnimBase):
     textAlpha=1.0                   # for fading effects
     zoom=None                       # Future: would be (startSize,endSize)
     textBuffer=None                 # for rendering text before sending to panel
-
+    lineType=None                   # possibly passed in for Hershey fonts
 
     def __init__(self, **kwargs):
         super(TextAnimBase, self).__init__(**kwargs)
@@ -67,6 +67,9 @@ class TextAnimBase(AnimBase):
 
         # This needs changing to use self.text.Xpos etc at some point
         self.origin=(self.Xpos,self.Ypos)
+
+        if self.text.lineType:
+            self.lineType=self.text.lineType
 
         # buffer size needs to be adjusted if HERSHEY because openCV seems to
         #lose the first two horizontal pixels (left and right) and 2 vertical (top and bottom)
@@ -182,9 +185,7 @@ class TextAnimBase(AnimBase):
         else:
             raise UnknownFontType
 
-        self.font.drawText(self.textBuffer,origin,self.text.getText(),self.text.getFgColor())
-
-
+        self.font.drawText(self.textBuffer,origin,self.text.getText(),self.text.getFgColor(),self.lineType)
 
     def refreshCanvas(self):
         """
