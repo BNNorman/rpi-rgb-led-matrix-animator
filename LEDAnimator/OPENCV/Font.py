@@ -136,7 +136,7 @@ class Font():
             len+=w
         return len,h+b
 
-    def drawText(self,img,x,y,message,fgColor):
+    def drawText(self,img,x,y,message,fgColor,lineType=LINE_8):
         """
         openCV font draw clips the text to the img it is being drawn on. The BDF fonts are written to a buffer
         then clipped.
@@ -159,14 +159,14 @@ class Font():
         # otherwise all the letters are colored with fgColor
         # Background colors are handled by textAnimBase
 
-        print "OPENCV\Font.py().drawText() img shape",img.shape
+#        print "OPENCV\Font.py().drawText() img shape",img.shape
 
         if isinstance(fgColor,Palette):
             Xpos=x
             for ch in message:
                 (w, h), b = cv2.getTextSize(ch, self.fontFace, self.fontScale, self.thickness)
                 color=fgColor.getNextEntry().getPixelColor()
-                cv2.putText(img, ch,(Xpos,y), font, self.fontScale, color,self.thickness,self.lineType,False)
+                cv2.putText(img, ch,(Xpos,y), font, self.fontScale, color,self.thickness,lineType,False)
                 Xpos+=w
         else:
             # text is all one colour
