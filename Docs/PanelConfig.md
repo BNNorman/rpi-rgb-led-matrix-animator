@@ -10,16 +10,17 @@ I'm going to explain my configuration in the hope it helps you with yours.
 You'll see this code near the beginning of my Examples :-
 
     PANEL_PARALLEL=2    # 2 in parallel = 64 leds vertical
-    PANEL_ROWS=32       # each sub panel is 32 LED x 32
+    PANEL_ROWS=32       # each sub panel is 32 rows of 32 columns
+    PANEL_COLS=32
     PANEL_SERIES=2      # 2 in series = 64 leds horizontcal
     
-    Panel.init(rows=PANEL_ROWS, chain_length=PANEL_SERIES, parallel=PANEL_PARALLEL, fps=FPS,
+    Panel.init(rows=PANEL_ROWS, cols=PANEL_COLS,chain_length=PANEL_SERIES, parallel=PANEL_PARALLEL, fps=FPS,
                debug=DEBUG,videoCapture=False,videoName="./TextDemo.avi")
 
 As the comments say, my panels are 32x64 1:16 scan constructed, by the manufacturer, from two 32x32 subpanels - you can 
 just see the join.
 
-So, PANEL_ROWS is 32 and PANEL_SERIES is 2.
+So, PANEL_ROWS is 32, PANEL_COLS is 32 and PANEL_SERIES is 2.
 
 I have stacked two of these panels on top of each other so PANEL_PARALLEL=2.
 
@@ -84,8 +85,9 @@ The defaults I used are in **Panel.py** (see below) since I'm not likely to be c
     ##########################################################################################
     Options = RGBMatrixOptions()
     Options.rows = 32           # 32 rows in each panel
+    Options.cols = 32           # 32 cols in each sub-panel
     Options.parallel = 2        # two panels in parallel
-    Options.chain_length = 2       # sub-panels per panel
+    Options.chain_length = 2    # sub-panels per panel
     Options.gpio_slowdown = 2   # gets rid of flickering leds on my Pi3
     
     # on Linux not doing this prevents access to images (files)
