@@ -14,6 +14,8 @@ from matplotlib.colors import *
 from LEDAnimator.Image import *
 import random
 
+from LEDAnimator.Decorators import *
+
 class AnimBase(object):
     """
     AnimBase - base class of all animations
@@ -209,7 +211,7 @@ class AnimBase(object):
 
         self._Debug("AnimBase.animationHasFinished() animLoops is "+str(self.animLoops))
 
-        if self.animLoops:  self.reset()
+        #if self.animLoops:  self.reset()
 
     def reset(self,**kwargs):
         """
@@ -278,9 +280,14 @@ class AnimBase(object):
 
         # animationFinished is set by the animation to halt/freeze it till the duration has expired
         # however, setting animLoops to True resets the animation so it can loop
-        #if self.animationFinished:
+        if self.animationFinished:
             #print "AnimBase.nextFrame() animation has finished for "+self.animationClass()
-            #if self.animLoops: self.reset()
+            if self.animLoops:
+                print "AnimBase.nextFrame() animation finished & does not loop"
+                self.reset()
+            else:
+                print "AnimBase.nextFrame() animation finished & does not loop"
+                return True
 
         if self.startPaused():
             self._Debug("Animbase.nextFrame() startPaused() returned True")
@@ -307,6 +314,9 @@ class AnimBase(object):
         raise MethodNotImplemented("The step() method is missing in "+self.animationClass())
 
     def setSpeed(self, wanted):
+        return wanted
+
+    def off_setSpeed(self, wanted):
         """
         used to ensure speed is set to a sensible value. Empirical eveidence has shown that if
         speed<=1/fps the animations will stall. If that's the case speed is changed to 1.1/fps.
@@ -324,6 +334,7 @@ class AnimBase(object):
                                                                                         "stalling for", self.animationClass()
         else:
             self.speed = wanted
+
 
     def drawChainOnLayerBuffer(self):
         """
