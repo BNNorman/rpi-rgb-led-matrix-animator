@@ -171,7 +171,7 @@ class Font():
 
         self.charGlyphImage[ch]=im
 
-    def drawText(self,image,x,y,text,fgColor):
+    def drawText(self,image,x,y,text,fgColor,lineType=None):
         """
         Render the text on the image indicated at x,y using the specified foreground and
         background colors.
