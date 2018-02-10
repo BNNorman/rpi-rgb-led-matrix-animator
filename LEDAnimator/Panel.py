@@ -66,10 +66,13 @@ except:
 # these are passed in via init(rows=x, ...)
 ##########################################################################################
 Options = RGBMatrixOptions()
-Options.rows = 32           # 32 rows in each panel
-Options.parallel = 2        # two panels in parallel
-Options.chain_length = 2       # sub-panels per panel
-Options.gpio_slowdown = 2   # gets rid of flickering leds on my Pi3
+
+# these are the default values in RGBMatrixOPtions so don't need specfying here
+#Options.rows = 32           # 32 rows in each panel
+#Options.cols = 32
+#Options.parallel = 2        # two panels in parallel
+#Options.chain_length = 2       # sub-panels per panel
+#Options.gpio_slowdown = 2   # gets rid of flickering leds on my Pi3
 
 # on Linux not doing this prevents access to images (files)
 # after the RGBMatrix is created
@@ -243,7 +246,9 @@ def GetPixel(x,y):
     CheckInit()
 
     # Pixel X, Y values are rounded by the frameBuffer
-    return frameBuffer.getPixel(x, y)
+    # and returned as numpy arrays so need to convert to tuple
+    (a,b,c,d)=frameBuffer.getPixel(x, y)
+    return (a,b,c,d)
 
 def Clear():
     """
