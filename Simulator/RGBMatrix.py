@@ -48,7 +48,7 @@ class RGBMatrix(object):
 
         # calculate the window size in pixels
         pixelWidth = self.options.rows * self.options.parallel
-        pixelHeight = self.options.rows * self.options.chain_length
+        pixelHeight = self.options.cols * self.options.chain_length
 
 
         # on-screen window dimensions
