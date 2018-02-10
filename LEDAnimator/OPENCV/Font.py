@@ -152,6 +152,7 @@ class Font():
         :return None: text is drawn on the img
         """
 
+        lineType=LINE_8 if lineType is None else lineType
         font = self.fontFace | FONT_ITALIC if self.italic else self.fontFace
 
         # if fgColor is a Palette then we use the colors cyclically
