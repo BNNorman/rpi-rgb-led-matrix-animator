@@ -18,6 +18,7 @@ class Font():
 
     fontSize=10
     font=bdf.Font(fontSize) # temporary
+    lineType=LINE_8   # Hershey fonts only
 
     xFudge = 2      # rendering offsets to avoid edge corruption with openCV Hershey
     yFudge=1
@@ -56,7 +57,7 @@ class Font():
     def getFontMetrics(self):
         return self.font.getFontMetrics()
 
-    def drawText(self,img,origin,message,fgColor):
+    def drawText(self,img,origin,message,fgColor,lineType=None):
         """
         openCV font draw clips the text to the img it is being drawn on. The BDF fonts are written to a buffer
         then clipped.
@@ -74,5 +75,5 @@ class Font():
         """
         x, y = origin # would it technically be faster to pass a tuple?
 
-        self.font.drawText(img,x,y,message,fgColor)
+        self.font.drawText(img,x,y,message,fgColor,lineType)
 
