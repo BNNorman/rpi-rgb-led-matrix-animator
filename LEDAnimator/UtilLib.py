@@ -183,18 +183,19 @@ def getOverlapSlices(bg,fx0,fy0,fg):
     :param numpy ndarray fg: foreground image
     :return: foregroundimage slice,background image slice
     """
+
     # get rectangle coords for the foreground image
     fh,fw=fg.shape[:2]
-    fx1=fx0+fw-1
-    fy1=fy0+fh-1
+    fx1=fx0+fw
+    fy1=fy0+fh
 
     trap=True if fw>200 else False
 
     # background image is always at 0,0
     bh,bw=bg.shape[:2]
     bx0,by0=0,0
-    bx1=bw-1
-    by1=bh-1
+    bx1=bw
+    by1=bh
 
     # make sure fg & bg actually overlap, if not there are no slices
     if (fx0>bx1) or (fy0>by1) or (fx1<0) or (fy1<0):

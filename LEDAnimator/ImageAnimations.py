@@ -436,6 +436,7 @@ class Roll(ImageAnimBase):
             self.refreshCanvas()    #at current Xpos,Ypos
             self.init=False
             if self.rollWindow is None: # roll the whole image
+                # x,y,w,h
                 self.rollWindow=(0,0,self.fgImage.getWidth(),self.fgImage.getHeight())
             return
 
@@ -443,6 +444,8 @@ class Roll(ImageAnimBase):
         if self.curRollPos==self.rollSteps:
             self.refreshCanvas()
             return
+
+
 
         # roll the window
         self.fgImage.rollWindow(self.rollWindow,self.rollDirection, self.rollRate)
@@ -751,8 +754,6 @@ class TheMatrix(ImageAnimBase):
     # calculated
     columnSpeeds=[]
 
-
-
     def reset(self,**kwargs):
         super(TheMatrix,self).reset(**kwargs)
 
@@ -776,7 +777,7 @@ class TheMatrix(ImageAnimBase):
         # roll each column by the given amount
 
         for col in range(imWidth):
-            window=col,0,1,imHeight-1
+            window=col,0,1,imHeight
             self.fgImage.rollWindow(window,"down",self.columnSpeeds[col])
 
         self.refreshCanvas()
