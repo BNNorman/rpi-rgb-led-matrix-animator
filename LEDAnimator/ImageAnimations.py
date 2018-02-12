@@ -775,7 +775,6 @@ class TheMatrix(ImageAnimBase):
             return
 
         # roll each column by the given amount
-
         for col in range(imWidth):
             window=col,0,1,imHeight
             self.fgImage.rollWindow(window,"down",self.columnSpeeds[col])
