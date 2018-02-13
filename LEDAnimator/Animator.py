@@ -75,7 +75,7 @@ class Animator(object):
             # this exits if so
             self.checkPanelIsRunning()
 
-            t0 = time.clock()    # start time for this frame
+            t0 = time.time()    # start time for this frame
 
             Panel.Clear()
 
@@ -88,9 +88,9 @@ class Animator(object):
                     exit(1)
 
                 if self.debug:
-                    t2=time.clock()
+                    t2=time.time()
                     animInfo.nextFrame(self.debug)
-                    t3=time.clock()
+                    t3=time.time()
                     if (t3-t2)>frameInterval:
                         print "Animator.run() anim.nextFrame() took","%.6f" % (t3-t2,) ,"for ",\
                             animInfo.animFunc.__class__.__name__,"frameInterval is",frameInterval
@@ -102,7 +102,7 @@ class Animator(object):
             Panel.UpdateDisplay()
 
             # work out if we need to wait before the next loop
-            loopTime=time.clock() - t0
+            loopTime=time.time() - t0
 
             # check if
             if (loopTime>frameInterval) and not self.warned:
@@ -110,7 +110,7 @@ class Animator(object):
                                      "Total loopTime=",loopTime,"frameInterval=",frameInterval
                 self.warned=True
 
-            # slow down animation cycleto match the required frameInterval
+            # slow down animation cycle to match the required frameInterval
             # this gives a repeatable time interval for the animations
             # 200fps may not be achievable.
 
@@ -124,4 +124,4 @@ class Animator(object):
 
             # wait till the next frame interval
             while loopTime < frameInterval:
-                loopTime = time.clock() - t0
+                loopTime = time.time() - t0
