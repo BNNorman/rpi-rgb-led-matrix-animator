@@ -45,11 +45,13 @@ if DEBUG:
 # my panel is 64x64 made up of two panels stacked on top of each other
 # each panel is a single piece but is made of two 32x32 panels side by side
 PANEL_ROWS=32       # each sub panel is 32 LED x 32
+PANEL_COLS=32
 PANEL_SERIES=2      # 2 in series = 64 leds horizontal
 PANEL_PARALLEL=2    # 2 in parallel = 64 leds vertical
 
 # must initialise the Panel first since some animations need the width and height
-Panel.init(rows=PANEL_ROWS, chain_length=PANEL_SERIES, parallel=PANEL_PARALLEL, fps=FPS, videoCapture=False,
+Panel.init(rows=PANEL_ROWS, cols=PANEL_COLS, chain_length=PANEL_SERIES, parallel=PANEL_PARALLEL, fps=FPS, \
+                                                                                                 videoCapture=False,
            videoName="./All_ChainAnimations.avi",debug=DEBUG)
 
 
