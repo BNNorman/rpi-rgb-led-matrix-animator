@@ -39,12 +39,13 @@ if DEBUG:
 PANEL_PARALLEL=2    # 2 in parallel = 64 leds v
 # each panel is a single piece but is made of two 32x32 panels side by side
 PANEL_ROWS=32       # each sub panel is 32 LED x 32
+PANEL_COLS=32
 PANEL_SERIES=2      # 2 in series = 64 leds horizontal
 
 
 # The panel must be initialised first as it provides width and height info for the animations
 # LEDSpacing and LEDSize determine the on-screen size of the simulator window (if used)
-Panel.init(rows=PANEL_ROWS, chain_length=PANEL_SERIES, parallel=PANEL_PARALLEL, fps=FPS,
+Panel.init(rows=PANEL_ROWS, cols=PANEL_COLS,chain_length=PANEL_SERIES, parallel=PANEL_PARALLEL, fps=FPS,
            debug=DEBUG, videoCapture=False, videoName="./MixedDemo.avi")
 
 ####################
