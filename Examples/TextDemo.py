@@ -34,11 +34,12 @@ if DEBUG:
 PANEL_PARALLEL=2    # 2 in parallel = 64 leds v
 # each panel is a single piece but is made of two 32x32 panels side by side
 PANEL_ROWS=32       # each sub panel is 32 LED x 32
+PANEL_COLS=32
 PANEL_SERIES=2      # 2 in series = 64 leds horertical
 
 # The panel must be initialised first
 # params LEDspacing and LEDsize control the simulator window size
-Panel.init(rows=PANEL_ROWS, chain_length=PANEL_SERIES, parallel=PANEL_PARALLEL, fps=FPS,
+Panel.init(rows=PANEL_ROWS, cols=PANEL_COLS, chain_length=PANEL_SERIES, parallel=PANEL_PARALLEL, fps=FPS,
            debug=DEBUG,videoCapture=False,videoName="./TextDemo.avi")
 
 
@@ -64,8 +65,9 @@ bdfSeq= AnimSequence([
 ])
 
 #-----------
-cv2msg=Text(text=cv2Text,fontSize=12,fontFace=FONT_HERSHEY_SIMPLEX,
-                 fgColor=Palette.XMAS,bgColor=(125,0,125,255))
+cv2msg=Text(text=cv2Text,fontSize=12,fontFace=FONT_HERSHEY_SIMPLEX,fgColor=Palette.XMAS,bgColor=(125,0,125,255),
+            lineType=LINE_AA)
+
 cv2Seq= AnimSequence([
     TextAnimations.MoveTimed (duration=20, speed=0.3, fps=FPS, startPos=(64,40), endPos=(-tLenCV2,40),
                              multiColored=True,
