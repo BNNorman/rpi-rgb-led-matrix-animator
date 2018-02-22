@@ -11,6 +11,7 @@ If the Panel exits this code will halt
 import time
 from AnimInfo import AnimInfo
 import Panel
+import threading
 
 class Animator(object):
 
@@ -22,6 +23,8 @@ class Animator(object):
     debug=False
     id="[No id]"
     warned=False
+    running=False
+    runThread=None
 
     def __init__(self, **kwargs):
 
@@ -29,6 +32,8 @@ class Animator(object):
             setattr(self,key,value)
 
         self.animations = []
+        self.running=False
+        self.runThread=None
 
     def addAnimation(self, **kwargs):
 
@@ -53,6 +58,32 @@ class Animator(object):
                 if self.debug: print "Animator: panel is not running (5s timeout whilst waiting)."
                 exit(0)
 
+
+    def start(self):
+        """
+        execute the run() method in a separate thread
+
+        :return: Nothing
+        """
+
+        if self.runThread is not None:
+            print("Animator background thread is running. Ignored.")
+        self.runThread=threading.Thread(target=self.run)
+        self.runThread.start()
+
+    def stop(self):
+        """
+        stops the run() method
+        :return:
+        """
+        self.running=False
+        #wait for the run() method to exit
+        while self.runThread is not None:
+            pass
+        Panel.Clear()
+        Panel.UpdateDisplay()
+
+
     def run(self):
         """
         the animation run loop
@@ -68,8 +99,9 @@ class Animator(object):
         avg_frametime=0
 
         warned=False
+        self.running=True;
 
-        while True:
+        while self.running:
 
             # simulator window may have been closed
             # this exits if so
@@ -125,3 +157,5 @@ class Animator(object):
             # wait till the next frame interval
             while loopTime < frameInterval:
                 loopTime = time.time() - t0
+
+        self.runThread=None
