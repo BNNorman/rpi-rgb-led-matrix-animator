@@ -40,7 +40,7 @@ class TextAnimBase(AnimBase):
 
     Xpos=0                          # used when moving text
     Ypos=0
-    origin=(0,0)                    # x,y
+    origin=(0,0)                    # x,y for drawing
     bottomLeftOrigin = False        # top left corner is used for placement on the LED Panel
     text=Text()                     # text message to render
 
@@ -52,6 +52,8 @@ class TextAnimBase(AnimBase):
     zoom=None                       # Future: would be (startSize,endSize)
     textBuffer=None                 # for rendering text before sending to panel
     lineType=None                   # possibly passed in for Hershey fonts
+    startPos=None                   # used by Move routines
+    endPos=None                     # ditto
 
     def __init__(self, **kwargs):
         super(TextAnimBase, self).__init__(**kwargs)
@@ -67,6 +69,7 @@ class TextAnimBase(AnimBase):
 
         # This needs changing to use self.text.Xpos etc at some point
         self.origin=(self.Xpos,self.Ypos)
+        self.Xpos1,self.Ypos1=self.origin
 
         if self.text.lineType:
             self.lineType=self.text.lineType
@@ -92,6 +95,8 @@ class TextAnimBase(AnimBase):
         # fills the textBuffer
         self.setBgColor()
 
+        if self.startPos is not None:
+            self.origin=self.startPos
 
     def getFgColor(self):
         """
