@@ -226,10 +226,10 @@ def getOverlapSlices(bg,fx0,fy0,fg):
     if fy0<0:
         # foreground slice protrudes above the background
         fsy0=abs(fy0)
-        fsy1=fy1-fy0
+        fsy1=fsy0+bsy1-bsy0
     else:
         fsy0=0
-        fsy1=fy1-fy0
+        fsy1=bsy1-bsy0
 
     # ignore if the foreground slice has zero area
     if (fsx1-fsx0)*(fsy1-fsy0)==0:
