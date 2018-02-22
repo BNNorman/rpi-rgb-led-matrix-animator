@@ -59,12 +59,18 @@ class Animator(object):
                 exit(0)
 
 
-    def start(self):
+    def start(self,reset=True):
         """
         execute the run() method in a separate thread
 
+        The reset parameter if True causes animations to start at the beginning
+        otherwise they resume from where they left off
+
+        :param bool reset: enable the animations to start over.
         :return: Nothing
         """
+
+        if reset: self.reset()
 
         if self.runThread is not None:
             print("Animator background thread is running. Ignored.")
@@ -74,6 +80,7 @@ class Animator(object):
     def stop(self):
         """
         stops the run() method
+
         :return:
         """
         self.running=False
@@ -82,6 +89,10 @@ class Animator(object):
             pass
         Panel.Clear()
         Panel.UpdateDisplay()
+
+    def reset(self):
+        for animInfo in self.animations:
+            animInfo.reset()
 
 
     def run(self):
