@@ -29,6 +29,16 @@ class AnimInfo(object):
         for key,value in kwargs.iteritems():
             setattr(self,key,value)
 
+
+    def reset(self):
+        """
+        Added to enable resetting an animation to it's starting point
+
+        :return:
+        """
+        if self.animFunc is not None:
+            self.animFunc.reset()
+
     def nextFrame(self,debug=False):
         """
         called from Animator.run()
@@ -39,7 +49,6 @@ class AnimInfo(object):
         self.debug=debug
 
         # initialise the next animation - setup animFunc
-        #if not self.beginDone: self.begin()
 
         if self.animFunc is None:
             self.animFunc = self.animSeq.getNextAnimation()
