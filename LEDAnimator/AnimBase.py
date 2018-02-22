@@ -63,6 +63,9 @@ class AnimBase(object):
     startPause=0            # parameters which may be used to delay the start after a reset()
     endPause=0              # or the restart() after the animation has ended
 
+    startPos=None           # image movers use these
+    endPos=None
+
     ###############################################################################################
     # images
     #
@@ -244,6 +247,9 @@ class AnimBase(object):
 
         self.init=True  # tells the animation to initialise itself
 
+        if self.startPos is not None and self.fgImage is not None:
+            self.fgImage.setPosition(self.startPos)
+
     def nextFrame(self,id="[No id]",debug=False):
         """
         calculates the current value of self.tick based on the speed of the animation then calls the animation's step()
@@ -416,6 +422,7 @@ class AnimBase(object):
             img.resizeFitToTarget(Panel.width,Panel.height)
         else:
             raise InvalidMode("AnimBase.setScale(). Image scale mode should be V(ertical),H(orizontal) or F(it)")
+
 
     def refreshCanvas(self):
         """
