@@ -99,3 +99,7 @@ class FileNotFound(Error):
 class InvalidScale(Error):
     """A scale value was given that is not in range"""
     pass
+
+class UnsupportedFont(Error):
+    """ A request was made for an unsupported font """
+    pass
