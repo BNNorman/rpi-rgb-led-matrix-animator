@@ -46,6 +46,9 @@ ALIAS=4 # used by chains
 # used by Font to handle font types differently
 BDF_FONTTYPE=0
 HERSHEY_FONTTYPE=1
+TRUETYPE_FONTTYPE=2
+OPENTYPE_FONTTYPE=3
+UNKNOWN_FONTTYPE=4
 
 
 # conversion routines based on rgb order
@@ -79,6 +82,7 @@ FILLED=cv2.FILLED   #-1
 IMREAD_UNCHANGED=cv2.IMREAD_UNCHANGED   #-1
 IMREAD_GRAYSCALE=cv2.IMREAD_GRAYSCALE   #0
 IMREAD_COLOR=cv2.IMREAD_COLOR           #1
+
 
 
 #BDF font folder location
