@@ -48,7 +48,9 @@ BDF_FONTTYPE=0
 HERSHEY_FONTTYPE=1
 TRUETYPE_FONTTYPE=2
 OPENTYPE_FONTTYPE=3
-UNKNOWN_FONTTYPE=4
+PIL_FONTTYPE=4
+
+UNKNOWN_FONTTYPE=-1
 
 
 # conversion routines based on rgb order
@@ -93,6 +95,13 @@ BDF_FONTLOC=os.path.join(parent,"Fonts")
 
 assert os.path.isdir(BDF_FONTLOC),"Constants.py: BDF fonts expected to be at "+BDF_FONTLOC
 
+
+##################################################################################
+#
+# since changes were made to include PIL font formats you can also specify a BDF
+# font by filename. The old method Font("BDF",size) is depracted
+#
+##################################################################################
 # BDF by name
 BDF_GOHU14="gohufont-14.bdf"
 BDF_HELVR12="helvR12.bdf"
