@@ -131,10 +131,29 @@ class Font():
         #(w,h),b=cv2.getTextSize(text,self.fontFace,self.fontScale,self.thickness)
 
         len=0
+        h=0
+        b=0
         for ch in text:
             (w, h), b = cv2.getTextSize(ch, self.fontFace, self.fontScale, self.thickness)
             len+=w
         return len,h+b
+
+    def channelSwap(self, color):
+        """
+        swaps the red and blue channels for simulator use
+        since openCV uses BGR images and PIL uses RGB
+
+        See Constants.py for RGB_R and RGB_B values
+
+        :param tuple color: (R,G,B)
+        :return: (r,g,b) r&b swapped if required
+        """
+
+        if RGB_R == 0: return color
+
+        # R & B are swapped
+        R, G, B ,A= color[RGB_R], color[RGB_G], color[RGB_B], color[ALPHA]
+        return (R, G, B,A)
 
     def drawText(self,img,x,y,message,fgColor,lineType=LINE_8):
         """
@@ -160,15 +179,16 @@ class Font():
         # otherwise all the letters are colored with fgColor
         # Background colors are handled by textAnimBase
 
-#        print "OPENCV\Font.py().drawText() img shape",img.shape
-
         if isinstance(fgColor,Palette):
             Xpos=x
             for ch in message:
                 (w, h), b = cv2.getTextSize(ch, self.fontFace, self.fontScale, self.thickness)
-                color=fgColor.getNextEntry().getPixelColor()
+                color=fgColor.getNextEntry().getPixelColor(alpha=1.0)
+                color=self.channelSwap(color)
                 cv2.putText(img, ch,(Xpos,y), font, self.fontScale, color,self.thickness,lineType,False)
                 Xpos+=w
         else:
             # text is all one colour
-            cv2.putText(img, message,(x,y), font, self.fontScale, fgColor, self.thickness, self.lineType,False)
+            color = self.channelSwap(fgColor)
+            cv2.putText(img, message,(x,y), font, self.fontScale, color, self.thickness, self.lineType,False)
+
