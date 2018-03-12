@@ -171,6 +171,23 @@ class Font():
 
         self.charGlyphImage[ch]=im
 
+    def channelSwap(self, color):
+        """
+        swaps the red and blue channels for simulator use
+        since openCV uses BGR images and PIL uses RGB
+
+        See Constants.py for RGB_R and RGB_B values
+
+        :param tuple color: (R,G,B)
+        :return: (r,g,b) r&b swapped if required
+        """
+
+        if RGB_R == 0: return color
+
+        # R & B are swapped
+        R, G, B ,A= color[RGB_R], color[RGB_G], color[RGB_B], color[ALPHA]
+        return (R, G, B, A)
+
     def drawText(self,image,x,y,text,fgColor,lineType=None):
         """
         Render the text on the image indicated at x,y using the specified foreground and
@@ -188,6 +205,8 @@ class Font():
         :param tuple or Palette fgColor: colors to use for the foreground
         :return int: next character x position
         """
+        if not isinstance(fgColor, Palette):
+            fgColor = self.channelSwap(fgColor)
 
         for ch in text:
 
@@ -195,6 +214,7 @@ class Font():
 
             if isinstance(fgColor,Palette):
                 charColor=fgColor.getNextEntry().getPixelColor()
+                charColor=self.channelSwap(charColor)
                 char = self._ColorGlyph(char, charColor)
             else:
                 char = self._ColorGlyph(char, fgColor)
