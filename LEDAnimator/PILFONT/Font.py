@@ -138,6 +138,24 @@ class Font():
 
         return wid,h #self.font.getmask(text).getbbox()
 
+    def channelSwap(self,color):
+        """
+        swaps the red and blue channels for simulator use
+        since openCV uses BGR images and PIL uses RGB
+
+        See Constants.py for RGB_R and RGB_B values
+
+        :param tuple color: (R,G,B)
+        :return: (r,g,b) r&b swapped if required
+        """
+
+        if RGB_R==0: return color
+
+        # R & B are swapped
+        R, G, B,A = color[RGB_R], color[RGB_G], color[RGB_B], color[ALPHA]
+        return (R, G, B,A)
+
+
     def drawText(self,img,x,y,message,fgColor,lineType=LINE_AA):
         """
         draws message onto img. If fgColor is a palette each letter is drawn in
@@ -156,8 +174,6 @@ class Font():
         :return None: text is drawn on the img
         """
 
-
-
         # if fgColor is a Palette then we use the colors cyclically
         # which allows us to color each letter differently
         # otherwise all the letters are colored with fgColor
@@ -168,27 +184,23 @@ class Font():
 
         render=ImageDraw.Draw(pil_im)
 
+        # turn of anit-aliasing?
         if lineType!=LINE_AA:
             render.fontmode="1"
 
         if isinstance(fgColor,Palette):
+            # render each character using the next color in the palette
             Xpos=x
             for ch in message:
                 (w, h)= self.getTextBbox(ch)
                 color=fgColor.getNextEntry().getPixelColor()
-
-                # see Constants.py, if using the simulator
-                # RGB_R and RGB_B must be swapped for openCV
-
-                if RGB_R!=0:
-                    # R & B are swapped
-                    R,G,B=color[RGB_R],color[RGB_G],color[RGB_B]
-                    color=(R,G,B)
+                color=self.channelSwap(color)
                 render.text((Xpos,y),ch,font=self.font,fill=color)
                 Xpos+=w
         else:
-            # text is all one colour
-            render.text((x, y), message, font=self.font)
+            # single color text
+            fgColor=self.channelSwap(fgColor)
+            render.text((x, y), message, font=self.font,fill=fgColor)
 
         #convert the PIL image back to a numpy array
         img[...]=np.array(pil_im)
