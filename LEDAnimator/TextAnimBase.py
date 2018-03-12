@@ -78,6 +78,7 @@ class TextAnimBase(AnimBase):
         #lose the first two horizontal pixels (left and right) and 2 vertical (top and bottom)
 
 
+        # set the textBuffer to transparent black to start with
         w, h = self.font.getTextBbox(self.text.getText())
         if self.font.getFontType()==BDF_FONTTYPE:
             # BDF font width does not leave a gap between letters
@@ -183,6 +184,8 @@ class TextAnimBase(AnimBase):
             # also, openCV needs a margin of 2 pixels at left and top so we do the same here
             # so they appear similar
             origin=(1,0)
+        elif fontType == TRUETYPE_FONTTYPE or fontType==OPENTYPE_FONTTYPE or fontType==PIL_FONTTYPE:
+            origin=(0,0)
         elif fontType==HERSHEY_FONTTYPE:
             # openCV fonts take Y to be the baseline which make text render above 0 so
             # we must move it down
@@ -191,6 +194,7 @@ class TextAnimBase(AnimBase):
             raise UnknownFontType
 
         self.font.drawText(self.textBuffer,origin,self.text.getText(),self.text.getFgColor(),self.lineType)
+
 
     def refreshCanvas(self):
         """
@@ -217,7 +221,7 @@ class TextAnimBase(AnimBase):
         # set alpha textAlpha is in range 0->1.0
         # no point bothering if alpha is zero
         if self.textAlpha>0:
-            self.textBuffer[...,ALPHA]=int(self.textAlpha*255)
+            self.textBuffer[..., ALPHA].astype(np.uint8)*self.textAlpha
             Panel.DrawImage(x, y, self.textBuffer)
 
 
