@@ -221,6 +221,7 @@ class TextAnimBase(AnimBase):
         # set alpha textAlpha is in range 0->1.0
         # no point bothering if alpha is zero
         if self.textAlpha>0:
+            # multiply all alphas by textAlpha to retain relative transparency
             self.textBuffer[..., ALPHA].astype(np.uint8)*self.textAlpha
             Panel.DrawImage(x, y, self.textBuffer)
 
