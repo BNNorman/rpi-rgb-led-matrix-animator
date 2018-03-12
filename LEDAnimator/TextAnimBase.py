@@ -108,8 +108,11 @@ class TextAnimBase(AnimBase):
         if color is None:
             return None
         elif isinstance(color,Palette):
+
+            # text is multicolored so return the palette
             if self.text.getMultiColored():
                 return color
+            # text is not multicolored so return the next color from the palette
             return color.getNextEntry().getPixelColor()
         elif isinstance(color,Color):
             return color.getPixelColor()
@@ -193,7 +196,7 @@ class TextAnimBase(AnimBase):
         else:
             raise UnknownFontType
 
-        self.font.drawText(self.textBuffer,origin,self.text.getText(),self.text.getFgColor(),self.lineType)
+        self.font.drawText(self.textBuffer,origin,self.text.getText(),self.getFgColor(),self.lineType)
 
 
     def refreshCanvas(self):
@@ -214,16 +217,22 @@ class TextAnimBase(AnimBase):
 
         x,y=self.origin if self.origin is not None else (0,0)
 
+        print "TextAnimbase.refreshCanvas() origin",self.origin
+
         if self.bottomLeftOrigin:
             h,w=self.textBuffer.shape[:2]
             y=y-h
 
-        # set alpha textAlpha is in range 0->1.0
+        # set alpha
+        # textAlpha is in range 0->1.0
+        # multiply current settings
         # no point bothering if alpha is zero
         if self.textAlpha>0:
             # multiply all alphas by textAlpha to retain relative transparency
-            self.textBuffer[..., ALPHA].astype(np.uint8)*self.textAlpha
-            Panel.DrawImage(x, y, self.textBuffer)
+            im=self.textBuffer.copy()
+            im[:, :, 3] = im[:, :, 3].astype(float) * self.textAlpha
+            Panel.DrawImage(x, y, im)
+
 
 
 
