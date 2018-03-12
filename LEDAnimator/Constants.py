@@ -35,7 +35,8 @@ HSV_H=0
 HSV_S=1
 HSV_V=2
 
-# you probably need to
+# you probably need to set this ro RGB_R=0 and RGB_B=2 for the real panel
+# the simulator uses openCV therefore uses BGR order not RGB
 RGB_R=2
 RGB_G=1
 RGB_B=0
