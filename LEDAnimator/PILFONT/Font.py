@@ -8,12 +8,12 @@ then drawn on the Panel so we don't care about originBottomLeft - that will
 be taken care of when the textBuffer is copied to the panel
 
 """
-import LEDAnimator.UtilLib
 import numpy as np
 
 from LEDAnimator.Colors import *
 from LEDAnimator.Constants import *
 from LEDAnimator.Palette import *
+from LEDAnimator.UtilLib import *
 
 import cv2
 
@@ -138,23 +138,6 @@ class Font():
 
         return wid,h #self.font.getmask(text).getbbox()
 
-    def channelSwap(self,color):
-        """
-        swaps the red and blue channels for simulator use
-        since openCV uses BGR images and PIL uses RGB
-
-        See Constants.py for RGB_R and RGB_B values
-
-        :param tuple color: (R,G,B)
-        :return: (r,g,b) r&b swapped if required
-        """
-
-        if RGB_R==0: return color
-
-        # R & B are swapped
-        R, G, B,A = color[RGB_R], color[RGB_G], color[RGB_B], color[ALPHA]
-        return (R, G, B,A)
-
 
     def drawText(self,img,x,y,message,fgColor,lineType=LINE_AA):
         """
@@ -194,12 +177,12 @@ class Font():
             for ch in message:
                 (w, h)= self.getTextBbox(ch)
                 color=fgColor.getNextEntry().getPixelColor()
-                color=self.channelSwap(color)
+                color=channelSwap(color)
                 render.text((Xpos,y),ch,font=self.font,fill=color)
                 Xpos+=w
         else:
             # single color text
-            fgColor=self.channelSwap(fgColor)
+            fgColor=channelSwap(fgColor)
             render.text((x, y), message, font=self.font,fill=fgColor)
 
         #convert the PIL image back to a numpy array
