@@ -361,19 +361,19 @@ def adjustTupleBrightnessAndAlpha(color=None,brightness=1.0,alpha=1.0):
 
     return (color[RGB_R], color[RGB_G], color[RGB_B], color[ALPHA])
 
- def channelSwap(self,color):
-        """
-        swaps the red and blue channels for simulator use
-        since openCV uses BGR images and PIL uses RGB
+def channelSwap(color):
+    """
+    swaps the red and blue channels for simulator use
+    since openCV uses BGR images and PIL uses RGB
 
-        See Constants.py for RGB_R and RGB_B values
+    See Constants.py for RGB_R and RGB_B values
 
-        :param tuple color: (R,G,B)
-        :return: (r,g,b) r&b swapped if required
-        """
+    :param tuple color: (R,G,B)
+    :return: (r,g,b) r&b swapped if required
+    """
 
-        if RGB_R==0: return color
+    if RGB_R==0: return color
 
-        # R & B are swapped
-        R, G, B,A = color[RGB_R], color[RGB_G], color[RGB_B], color[ALPHA]
-        return (R, G, B,A)
+    # R & B are swapped
+    R, G, B,A = color[RGB_R], color[RGB_G], color[RGB_B], color[ALPHA]
+    return (R, G, B,A)
