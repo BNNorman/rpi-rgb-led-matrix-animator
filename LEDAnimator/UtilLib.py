@@ -130,6 +130,7 @@ def pasteWithAlphaAt(bg, bx, by, fg):
 
     # ignore if there's no foreground image
     if fg is None:
+        #print "UtilLib.pasteWithAlpha() fg is None"
         return bx
 
     bx0,by0=nearest(bx),nearest(by)
@@ -141,15 +142,19 @@ def pasteWithAlphaAt(bg, bx, by, fg):
 
     # if None don't bother doing anything
     if fgROI is None or bgROI is None:
+        #print "UtilLib.pasteWithAlpha() ROI is None,bx,by=",bx,by,"fg shape=",fg.shape
         return bx
 
     blend=alphaBlend(fgROI,bgROI)
 
     if blend is None:
+        #print "UtilLib.pasteWithAlpha() Blend is None"
         return bx
 
     # copy blend output to background
     bgROI[:,:,:]=blend[:,:,:]
+
+    #cv2.imshow("blend",blend)
 
     h,w=fg.shape[:2]
 
@@ -355,3 +360,20 @@ def adjustTupleBrightnessAndAlpha(color=None,brightness=1.0,alpha=1.0):
     color = (uint8(r), uint8(g), uint8(b), uint8(alpha))
 
     return (color[RGB_R], color[RGB_G], color[RGB_B], color[ALPHA])
+
+ def channelSwap(self,color):
+        """
+        swaps the red and blue channels for simulator use
+        since openCV uses BGR images and PIL uses RGB
+
+        See Constants.py for RGB_R and RGB_B values
+
+        :param tuple color: (R,G,B)
+        :return: (r,g,b) r&b swapped if required
+        """
+
+        if RGB_R==0: return color
+
+        # R & B are swapped
+        R, G, B,A = color[RGB_R], color[RGB_G], color[RGB_B], color[ALPHA]
+        return (R, G, B,A)
