@@ -14,7 +14,7 @@ import numpy as np
 from LEDAnimator.Colors import *
 from LEDAnimator.Constants import *
 from LEDAnimator.Palette import *
-from UtilLib import *
+from LEDAnimator.UtilLib import *
 
 import os
 
