@@ -14,7 +14,7 @@ import numpy as np
 from LEDAnimator.Colors import *
 from LEDAnimator.Constants import *
 from LEDAnimator.Palette import *
-
+from UtilLib import *
 
 import os
 
@@ -138,22 +138,6 @@ class Font():
             len+=w
         return len,h+b
 
-    def channelSwap(self, color):
-        """
-        swaps the red and blue channels for simulator use
-        since openCV uses BGR images and PIL uses RGB
-
-        See Constants.py for RGB_R and RGB_B values
-
-        :param tuple color: (R,G,B)
-        :return: (r,g,b) r&b swapped if required
-        """
-
-        if RGB_R == 0: return color
-
-        # R & B are swapped
-        R, G, B ,A= color[RGB_R], color[RGB_G], color[RGB_B], color[ALPHA]
-        return (R, G, B,A)
 
     def drawText(self,img,x,y,message,fgColor,lineType=LINE_8):
         """
@@ -184,11 +168,11 @@ class Font():
             for ch in message:
                 (w, h), b = cv2.getTextSize(ch, self.fontFace, self.fontScale, self.thickness)
                 color=fgColor.getNextEntry().getPixelColor(alpha=1.0)
-                color=self.channelSwap(color)
+                color=channelSwap(color)
                 cv2.putText(img, ch,(Xpos,y), font, self.fontScale, color,self.thickness,lineType,False)
                 Xpos+=w
         else:
             # text is all one colour
-            color = self.channelSwap(fgColor)
+            color = channelSwap(fgColor)
             cv2.putText(img, message,(x,y), font, self.fontScale, color, self.thickness, self.lineType,False)
 
