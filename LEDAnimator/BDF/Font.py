@@ -15,7 +15,7 @@ The definitions in Constants.py enable the programmer to define which fonts are 
 The physical location of the font folder is also declared in Constants.py as BDF_FONTLOC
 
 """
-import LEDAnimator.UtilLib
+
 import numpy as np
 
 from LEDAnimator.Colors import *
@@ -24,7 +24,7 @@ from LEDAnimator.Palette import *
 
 # in the same location as Font.py
 import Cache as bdfCache
-from UtilLib import *
+from LEDAnimator.UtilLib import *
 
 import os
 
@@ -204,7 +204,7 @@ class Font():
             else:
                 char = self._ColorGlyph(char, fgColor)
 
-            x=LEDAnimator.UtilLib.pasteWithAlphaAt(image, x+1, y, char)
+            x=pasteWithAlphaAt(image, x+1, y, char)
 
         return x
 
