@@ -368,8 +368,8 @@ def channelSwap(color):
 
     See Constants.py for RGB_R and RGB_B values
 
-    :param tuple color: (R,G,B)
-    :return: (r,g,b) r&b swapped if required
+    :param tuple color: (R,G,B,A)
+    :return: (r,g,b,a) r&b swapped if required
     """
 
     if RGB_R==0: return color
