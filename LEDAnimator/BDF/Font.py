@@ -24,6 +24,7 @@ from LEDAnimator.Palette import *
 
 # in the same location as Font.py
 import Cache as bdfCache
+from UtilLib import *
 
 import os
 
@@ -171,22 +172,6 @@ class Font():
 
         self.charGlyphImage[ch]=im
 
-    def channelSwap(self, color):
-        """
-        swaps the red and blue channels for simulator use
-        since openCV uses BGR images and PIL uses RGB
-
-        See Constants.py for RGB_R and RGB_B values
-
-        :param tuple color: (R,G,B)
-        :return: (r,g,b) r&b swapped if required
-        """
-
-        if RGB_R == 0: return color
-
-        # R & B are swapped
-        R, G, B ,A= color[RGB_R], color[RGB_G], color[RGB_B], color[ALPHA]
-        return (R, G, B, A)
 
     def drawText(self,image,x,y,text,fgColor,lineType=None):
         """
@@ -206,7 +191,7 @@ class Font():
         :return int: next character x position
         """
         if not isinstance(fgColor, Palette):
-            fgColor = self.channelSwap(fgColor)
+            fgColor = channelSwap(fgColor)
 
         for ch in text:
 
@@ -214,7 +199,7 @@ class Font():
 
             if isinstance(fgColor,Palette):
                 charColor=fgColor.getNextEntry().getPixelColor()
-                charColor=self.channelSwap(charColor)
+                charColor=channelSwap(charColor)
                 char = self._ColorGlyph(char, charColor)
             else:
                 char = self._ColorGlyph(char, fgColor)
