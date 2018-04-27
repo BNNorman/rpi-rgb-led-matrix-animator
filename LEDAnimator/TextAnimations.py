@@ -20,7 +20,9 @@ class On(TextAnimBase):
     On simply displays the given text message until the duration expires
     """
     def step(self):
-        self.drawText()
+        if self.init:
+            self.drawText()
+            self.init=False
         self.refreshCanvas()
 
 # FADE
@@ -171,7 +173,7 @@ class MoveTimed(TextAnimBase):
     yScrollRate = 0         # not moving
     yLimit=Panel.height # recalculated based on the text size
     xLimit=Panel.width
-    multiColored=False  # now in the text object
+    OFFmultiColored=False  # depracated, now in the text object
     startPause=0        # hold text at start
     endPause=0          # hold text at end
     moveTime=0          # time available between the start and end pauses (if any)
