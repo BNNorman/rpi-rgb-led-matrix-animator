@@ -13,6 +13,8 @@ from Palette import *
 from Colors import Color
 from ExceptionErrors import *
 from UtilLib import *
+from Decorators import *
+import Scroller
 
 # ON
 class On(TextAnimBase):
@@ -91,6 +93,7 @@ class FadeOut(Fade):
     """
     direction=-1
 
+
 class Move(TextAnimBase):
     """
     general purpose text mover.
@@ -153,6 +156,35 @@ class Move(TextAnimBase):
         self.refreshCanvas()
 
 
+
+class SmoothScroller(TextAnimBase):
+    """
+    Will slide text from startPos(x,y) to endPos(x,y) in duration
+
+    The process is run in a seperate thread in an attempt to achieve higher refresh rates
+    """
+
+    import Panel
+
+    duration=0
+    startPos=None
+    endPos=No
+    scroller=None
+
+    def step(self):
+       if self.init:
+            self.fgColor=self.getFgColor()
+            self.multiColored=self.text.getMultiColored()
+            self.drawText()
+
+            if self.scroller is None:
+                self.scroller = Scroller.Scroller(self.textBuffer,self.startPos,self.endPos,self.duration,
+                                                  Panel.Options)
+            self.scroller.start()
+            self.init = False
+
+
+
 class MoveTimed(TextAnimBase):
     """
     another general purpose text mover.
@@ -193,7 +225,6 @@ class MoveTimed(TextAnimBase):
 
         self.xScrollRate = (xEnd - xStart) / self.moveTime
         self.yScrollRate = (yEnd - yStart) / self.moveTime
-
 
     def step(self):
 
