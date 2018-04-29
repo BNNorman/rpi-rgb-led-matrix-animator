@@ -62,8 +62,8 @@ class Scroller():
         startX,startY=startPos
         endX,endY=endPos
 
-        self.xStep=(startX-endX)/self.loopDelay  # results in negative value moving left from startX
-        self.yStep=(startY-endY)/self.loopDelay
+        self.xStep=self.loopDelay*(endX-startX)/self.duration  # results in negative value moving left from startX
+        self.yStep=self.loopDelay*(endY-startY)/self.duration
 
         # converting now reduces loop time
         #self.image=Image.fromarray(img).convert("RGB")
@@ -88,10 +88,10 @@ class Scroller():
             self.Xpos=self.Xpos+self.xStep
             self.Ypos=self.Ypos+self.yStep
 
-            Panel.DrawImage(self.img,self.Xpos,self.Ypos)
+            Panel.DrawImage(self.Xpos,self.Ypos,self.img)
 
             # has no effect on speed
-            #time.sleep(self.loopDelay)
+            time.sleep(self.loopDelay)
 
         self.busy=False
 
