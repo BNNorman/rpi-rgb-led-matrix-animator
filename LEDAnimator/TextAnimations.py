@@ -168,7 +168,7 @@ class SmoothScroller(TextAnimBase):
 
     duration=0
     startPos=None
-    endPos=No
+    endPos=None
     scroller=None
 
     def step(self):
