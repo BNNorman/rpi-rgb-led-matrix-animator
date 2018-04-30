@@ -132,8 +132,6 @@ class Font():
         return w,h+b
 
 
-
-
     def drawText(self,img,x,y,message,fgColor,lineType=LINE_8):
         """
         openCV font draw clips the text to the img it is being drawn on. The BDF fonts are written to a buffer
@@ -159,13 +157,22 @@ class Font():
         # Background colors are handled by textAnimBase
 
         if isinstance(fgColor,Palette):
-            Xpos=x
-            for ch in message:
-                (w, h), b = cv2.getTextSize(ch, self.fontFace, self.fontScale, self.thickness)
-                color=fgColor.getNextEntry().getPixelColor(alpha=1.0)
-                color=channelSwap(color)
-                cv2.putText(img, ch,(Xpos,y), font, self.fontScale, color,self.thickness,lineType,False)
-                Xpos+=w
+            for i in range(len(message)):
+                subStr = message[:i + 1]
+                (mw, h),b = cv2.getTextSize(subStr,self.fontFace, self.fontScale, self.thickness)
+                (cw, h), b = cv2.getTextSize(message[i], self.fontFace, self.fontScale, self.thickness)
+                color = fgColor.getNextEntry().getPixelColor()
+                color = channelSwap(color)
+                cv2.putText( img,message[i],(x + mw - cw, y),  font, self.fontScale, color,self.thickness,lineType,
+                             False)
+
+            #Xpos=x
+            #for ch in message:
+            #    (w, h), b = cv2.getTextSize(ch, self.fontFace, self.fontScale, self.thickness)
+            #    color=fgColor.getNextEntry().getPixelColor(alpha=1.0)
+            #    color=channelSwap(color)
+            #    cv2.putText(img, ch,(Xpos,y), font, self.fontScale, color,self.thickness,lineType,False)
+            #    Xpos+=w
         else:
             # text is all one colour
             color = channelSwap(fgColor)
