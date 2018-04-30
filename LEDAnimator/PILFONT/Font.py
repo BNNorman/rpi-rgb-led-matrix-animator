@@ -175,13 +175,20 @@ class Font():
 
         if isinstance(fgColor,Palette):
             # render each character using the next color in the palette
-            Xpos=x
-            for ch in message:
-                (w, h)= self.getTextBbox(ch)
-                color=fgColor.getNextEntry().getPixelColor()
+            #Xpos=x
+            for i in range(len(message)):
+                subStr=message[:i+1]
+                mw, h= self.getTextBbox(subStr)
+                cw,h=self.getTextBbox(message[i])
+                color = fgColor.getNextEntry().getPixelColor()
                 color=channelSwap(color)
-                render.text((Xpos,y),ch,font=self.font,fill=color)
-                Xpos+=w
+                render.text((x+mw-cw,y),message[i],font=self.font,fill=color)
+            #for ch in message:
+            #    (w, h)= self.getTextBbox(ch)
+            #    color=fgColor.getNextEntry().getPixelColor()
+            #    color=channelSwap(color)
+            #    render.text((Xpos,y),ch,font=self.font,fill=color)
+            #    Xpos+=w
         else:
             # single color text
             fgColor=channelSwap(fgColor)
