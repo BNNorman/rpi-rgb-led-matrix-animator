@@ -130,13 +130,15 @@ class Font():
         size=self.font.getsize(text)
         w,h=size[0],size[1]
 
-        # for multi-colored text kerning is ignored which makes the text too long
-        wid=0
-        for ch in text:
-            size=self.font.getsize(ch)
-            wid=wid+size[0]
+        return w,h
 
-        return wid,h #self.font.getmask(text).getbbox()
+        # for multi-colored text kerning is ignored which makes the text too long
+        #wid=0
+        #for ch in text:
+        #    size=self.font.getsize(ch)
+        #    wid=wid+size[0]
+
+        #return wid,h #self.font.getmask(text).getbbox()
 
 
     def drawText(self,img,x,y,message,fgColor,lineType=LINE_AA):
