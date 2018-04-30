@@ -127,16 +127,11 @@ class Font():
         :return int,int: width,height of the bounding box
         """
 
-        # opencv routine seems to get this wrong (too short)
-        #(w,h),b=cv2.getTextSize(text,self.fontFace,self.fontScale,self.thickness)
+        (w,h),b=cv2.getTextSize(text,self.fontFace,self.fontScale,self.thickness)
 
-        len=0
-        h=0
-        b=0
-        for ch in text:
-            (w, h), b = cv2.getTextSize(ch, self.fontFace, self.fontScale, self.thickness)
-            len+=w
-        return len,h+b
+        return w,h+b
+
+
 
 
     def drawText(self,img,x,y,message,fgColor,lineType=LINE_8):
