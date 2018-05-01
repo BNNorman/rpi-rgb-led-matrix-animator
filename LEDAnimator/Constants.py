@@ -61,7 +61,7 @@ PIXEL2HSV=cv2.COLOR_BGR2HSV if RGB_R==2 else cv2.COLOR_RGB2HSV
 HSV2PIXEL=cv2.COLOR_HSV2BGR if RGB_R==2 else cv2.COLOR_HSV2RGB
 
 # Hershey fonts render at this size for fontScale=1.0
-HERSHEY_FONTSIZE=22.0   # must be float
+HERSHEY_FONTSIZE=32.0   #22.0   # must be float
 
 # open cv version differ in their constant definition
 # if you have problems replace the definitions with the numbers following the hash
