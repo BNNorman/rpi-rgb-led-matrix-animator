@@ -39,7 +39,7 @@ class AntiAlias():
         self.lastX=None # used to calculate the slope between adjacent pixels
         self.lastY=None # ditto
 
-    def antiAlias(self,method=None,coordList):
+    def antiAlias(self,method=None,coordList=None):
         """
         converts coordList into an anti-aliased list using the method indicated.
 
