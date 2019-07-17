@@ -168,9 +168,9 @@ def UpdateDisplay():
         # no matrix refresh needed here
         matrix.SetImage(img)
     else:
-        img[RGB_R]*=redAdjust
-        img[RGB_G]*=greenAdjust
-        img[RGB_B]*=blueAdjust
+        img[RGB_R] = (img[RGB_R] * redAdjust)
+        img[RGB_G] = (img[RGB_G] * greenAdjust)
+        img[RGB_B] = (img[RGB_B] * blueAdjust)
 
         # note Constants.RGB_R & RGB_B will need to be set RGB_R=0 and RGB_B=2
         # to ensure RGB colours are in the correct order
